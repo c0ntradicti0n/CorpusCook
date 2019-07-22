@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Corpupus.iml" filepath="$PROJECT_DIR$/.idea/Corpupus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/CorpusCook.iml" filepath="$PROJECT_DIR$/.idea/CorpusCook.iml" />
     </modules>
   </component>
 </project>
