@@ -1,5 +1,8 @@
 import json
 
+import sys
+print(sys.path)
+
 from human_in_loop.corpus import Corpus
 from human_in_loop.model import Model
 from human_in_loop.sampler import Sampler
