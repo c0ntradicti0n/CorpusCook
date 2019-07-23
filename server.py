@@ -4,14 +4,12 @@ import pprint
 import sys
 import traceback
 
-print(sys.path)
-
 from human_in_loop.corpus import Corpus
 from human_in_loop.model import Model
 from human_in_loop.sampler import Sampler
 
 model = Model(model_path="models/model.tar.gz")
-corpus = Corpus(path='server_conll.conll3')
+corpus = Corpus(path='hil19.conll3')
 sampler = Sampler(sample_file='server_samples_bin.txt')
 
 import regex as re
@@ -82,7 +80,7 @@ class Echo(protocol.Protocol):
 def main():
     factory = protocol.ServerFactory()
     factory.protocol = Echo
-    reactor.listenTCP(80, factory)
+    reactor.listenTCP(1024, factory)
     reactor.run()
 
 
