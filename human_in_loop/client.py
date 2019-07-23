@@ -2,6 +2,9 @@
 from __future__ import unicode_literals
 
 import json
+import pprint
+import traceback
+
 import regex as re
 from kivy.support import install_twisted_reactor
 
@@ -15,8 +18,13 @@ routing_protocol_server_to_client = {
          'fun':  lambda app, annotation: app.take_next_rest(annotation),
          'except':
                  lambda app: app.take_next()
-         }
+         },
+    'got_sample': {
+        'fun':  lambda app, annotation: app.got_sample(annotation),
+        'except':
+            lambda app: app.take_next()
     }
+}
 
 
 
@@ -38,24 +46,18 @@ class EchoClient(protocol.Protocol):
             print (data)
             raise e
 
-
-
         if json_msg is None:
             return
 
-        #print ("That was the message: ", json_msg)
-        #print ('command' in json_msg)
-        #print ('command' in json_msg and json_msg['command'] in routing_protocol_server_to_client)
-
         if 'command' in json_msg and json_msg['command'] in routing_protocol_server_to_client:
-            #print ('client received valid json command')
             try:
                 routing_protocol_server_to_client[json_msg['command']]['fun'](self.factory.app, json_msg['result'])
             except Exception as e:
                 routing_protocol_server_to_client[json_msg['command']]['except'](self.factory.app)
-                print(str(e) + "\n\n\nERRONEOUS COMMAND FROM SERVER, NEGLECTING")
-            #print ('client did valid json command')
-        #self.factory.client.print_message(data.decode('utf-8'))
+                result = pprint.pformat(traceback.format_exc()) + '\n\n\n But client continues'
+        else:
+            print ('Not a valid answer from the server; no command or command not in routing_protocol_server_to_client %s'
+                   % pprint.pformat(data))
 
 
 class EchoClientFactory(protocol.ClientFactory):

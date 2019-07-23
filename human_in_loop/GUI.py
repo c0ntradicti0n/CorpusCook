@@ -213,14 +213,15 @@ class RootWidget(ScreenManager):
             "First we have to load the model... that may take long time"
             self.textstore = TextStore(samples_path)
 
-        while True:
-            self.sentence = self.textstore.next_one()
-            if self.sentence == None:
-                print('Thank you for working!')
-                App.get_running_app().stop()
-                return None
-            self.client.commander ('make_prediction', text=self.sentence)
-            break
+        self.client.commander('deliver_sample')
+
+    def got_sample(self, text=''):
+        self.sentence = text
+        if self.sentence == None:
+            print('Thank you for working!')
+            App.get_running_app().stop()
+            return None
+        self.client.commander ('make_prediction', text=self.sentence)
 
     def take_next_rest(self, annotation):
         self.annotated_sample = annotation
