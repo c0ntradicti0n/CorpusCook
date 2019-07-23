@@ -20,8 +20,11 @@ wmd
 spacy-nightly
 git+https://github.com/c0ntradicti0n/Distinctiopus4.git
 beautifultable
+spacy
 scispacy
 https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.2.0/en_core_sci_sm-0.2.0.tar.gz
 bs4
 kivy
+regex
 Cython
+more_itertools

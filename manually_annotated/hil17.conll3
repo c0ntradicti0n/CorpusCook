@@ -35,7 +35,7 @@ perspective  NN  I-NN  I-CONTRAST
 there  EX  I-EX  I-CONTRAST
 is  VBZ  I-VBZ  I-CONTRAST
 no  DT  I-DT  I-CONTRAST
-\u201cother\u201d  NN  I-NN  I-CONTRAST
+\\u201cother\\u201d  NN  I-NN  I-CONTRAST
 as  IN  I-IN  I-CONTRAST
 everyone  NN  I-NN  I-CONTRAST
 is  VBZ  I-VBZ  I-CONTRAST
@@ -53,8 +53,8 @@ often  RB  I-RB  I-CONTRAST
 see  VBP  I-VBP  I-CONTRAST
 men  NNS  I-NNS  I-CONTRAST
 as  IN  I-IN  I-CONTRAST
-\u201cthe  NN  I-NN  I-CONTRAST
-other,\u201d  NN  I-NN  I-CONTRAST
+\\u201cthe  JJ  I-JJ  I-CONTRAST
+other,\\u201d  NN  I-NN  I-CONTRAST
 although  IN  I-IN  I-CONTRAST
 it  PRP  I-PRP  I-CONTRAST
 is  VBZ  I-VBZ  I-CONTRAST
@@ -84,7 +84,7 @@ moderate  JJ  I-JJ  I-CONTRAST
 perspective  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 
-Obama\u2019s  NN  B-NN  B-SUBJECT
+Obama\\u2019s  JJ  B-JJ  B-SUBJECT
 administration  NN  I-NN  I-SUBJECT
 started  VBD  I-VBD  I-CONTRAST
 in  IN  I-IN  I-CONTRAST
@@ -132,7 +132,7 @@ already  RB  I-RB  I-CONTRAST
 largely  RB  I-RB  I-CONTRAST
 recovered  VBN  I-VBN  I-CONTRAST
 during  IN  I-IN  I-CONTRAST
-Trump\u2019s  NN  I-NN  I-SUBJECT
+Trump\\u2019s  NN  I-NN  I-SUBJECT
 administration  NN  I-NN  I-SUBJECT
 which  WDT  I-WDT  I-CONTRAST
 is  VBZ  I-VBZ  I-CONTRAST
@@ -148,7 +148,7 @@ unemployment  NN  I-NN  I-CONTRAST
 rates  NNS  I-NNS  I-CONTRAST
 .  PCT  O  O
 
-Trump\u2019s  NN  B-NN  B-SUBJECT
+Trump\\u2019s  JJ  B-JJ  B-SUBJECT
 policies  NNS  I-NNS  I-CONTRAST
 on  IN  I-IN  I-CONTRAST
 tax  NN  I-NN  I-CONTRAST
@@ -201,9 +201,9 @@ Economy  NNP  O  O
 The  DT  B-DT  B-CONTRAST
 Obama  NNP  I-NNP  I-SUBJECT
 baseline  NN  I-NN  I-SUBJECT
-\u201cCBO  NN  I-NN  I-SUBJECT
+\\u201cCBO  NNP  I-NNP  I-SUBJECT
 January  NNP  I-NNP  I-CONTRAST
-2017\u201d  JJ  I-JJ  I-CONTRAST
+2017\\u201d  NN  I-NN  I-CONTRAST
 forecast  NN  I-NN  I-CONTRAST
 started  VBD  I-VBD  I-CONTRAST
 at  IN  I-IN  I-CONTRAST
@@ -218,9 +218,9 @@ billion  CD  I-CD  I-CONTRAST
 .  PCT  O  O
 As  IN  B-IN  B-CONTRAST
 for  IN  I-IN  I-CONTRAST
-Trump\u2019s  NN  I-NN  I-SUBJECT
-\u201c2018  NN  I-NN  I-SUBJECT
-forecast\u201d  NN  I-NN  I-SUBJECT
+Trump\\u2019s  JJ  I-JJ  I-SUBJECT
+\\u201c2018  NN  I-NN  I-SUBJECT
+forecast\\u201d  NN  I-NN  I-SUBJECT
 ,  PCT  I-PCT  I-CONTRAST
 it  PRP  I-PRP  I-CONTRAST
 only  RB  I-RB  I-CONTRAST
@@ -330,7 +330,7 @@ jobs  NNS  I-NNS  I-CONTRAST
 were  VBD  I-VBD  I-CONTRAST
 created  VBN  I-VBN  I-CONTRAST
 during  IN  I-IN  I-CONTRAST
-Trump\u2019s  NN  I-NN  I-SUBJECT
+Trump\\u2019s  JJ  I-JJ  I-SUBJECT
 governance  NN  I-NN  I-SUBJECT
 .  PCT  I-PCT  I-CONTRAST
 Interestingly  RB  I-RB  I-CONTRAST
@@ -471,7 +471,7 @@ was  VBD  I-VBD  I-CONTRAST
 not  RB  I-RB  I-CONTRAST
 associated  VBN  I-VBN  I-CONTRAST
 with  IN  I-IN  I-CONTRAST
-Obama\u2019s  NN  I-NN  I-SUBJECT
+Obama\\u2019s  JJ  I-JJ  I-SUBJECT
 leadership  NN  I-NN  I-CONTRAST
 .  PCT  I-PCT  I-CONTRAST
 
@@ -480,7 +480,7 @@ FY  NNP  I-NNP  I-SUBJECT
 2018  CD  I-CD  I-SUBJECT
 deficit  NN  I-NN  I-SUBJECT
 under  IN  I-IN  I-SUBJECT
-Trump\u2019s  NN  I-NN  I-SUBJECT
+Trump\\u2019s  NN  I-NN  I-SUBJECT
 watch  NN  I-NN  I-CONTRAST
 had  VBD  I-VBD  I-CONTRAST
 an  DT  I-DT  I-CONTRAST
@@ -501,8 +501,8 @@ Contrariwise  RB  O  O
 ,  PCT  O  O
 that  DT  B-DT  B-SUBJECT
 of  IN  I-IN  I-SUBJECT
-Obama\u2019s  NN  I-NN  I-SUBJECT
-decreased  VBN  I-VBN  I-CONTRAST
+Obama\\u2019s  NN  I-NN  I-SUBJECT
+decreased  VBD  I-VBD  I-CONTRAST
 by  IN  I-IN  I-CONTRAST
 58  CD  I-CD  I-CONTRAST
 percent  NN  I-NN  I-CONTRAST
@@ -528,7 +528,7 @@ special  JJ  I-JJ  I-CONTRAST
 region  NN  I-NN  I-CONTRAST
 of  IN  I-IN  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
-computer\u2019s  NN  I-NN  I-CONTRAST
+computer\\u2019s  JJ  I-JJ  I-CONTRAST
 memory  NN  I-NN  I-CONTRAST
 explicitly  RB  I-RB  I-CONTRAST
 allotted  VBN  I-VBN  I-CONTRAST
@@ -592,7 +592,7 @@ is  VBZ  I-VBZ  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
 portion  NN  I-NN  I-CONTRAST
 of  IN  I-IN  I-CONTRAST
-computer\u2019s  NN  I-NN  I-CONTRAST
+computer\\u2019s  JJ  I-JJ  I-CONTRAST
 memory  NN  I-NN  I-CONTRAST
 used  VBN  I-VBN  I-CONTRAST
 for  IN  I-IN  I-CONTRAST
@@ -837,9 +837,9 @@ way  NN  O  O
 the  DT  O  O
 words  NNS  O  O
 ,  PCT  O  O
-\u2018agenda\u2019  NN  O  O
+\\u2018agenda\\u2019  NN  O  O
 and  CC  O  O
-\u2018minutes\u2019  JJ  O  O
+\\u2018minutes\\u2019  NN  O  O
 can  MD  O  O
 be  VB  O  O
 used  VBN  O  O
@@ -977,7 +977,7 @@ It  PRP  I-PRP  I-CONTRAST
 is  VBZ  I-VBZ  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
 Wi-Fi  NN  I-NN  I-CONTRAST
-Alliance\u2019s  NN  I-NN  I-CONTRAST
+Alliance\\u2019s  NN  I-NN  I-CONTRAST
 name  NN  I-NN  I-CONTRAST
 for  IN  I-IN  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
@@ -2485,7 +2485,7 @@ is  VBZ  I-VBZ  I-CONTRAST
 given  VBN  I-VBN  I-CONTRAST
 to  TO  I-TO  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
-\u2018means\u2019  NN  I-NN  I-CONTRAST
+\\u2018means\\u2019  NN  I-NN  I-CONTRAST
 of  IN  I-IN  I-CONTRAST
 doing  VBG  I-VBG  I-CONTRAST
 things  NNS  I-NNS  I-CONTRAST
@@ -2495,7 +2495,7 @@ focuses  VBZ  I-VBZ  I-CONTRAST
 on  IN  I-IN  I-CONTRAST
 achieving  VBG  I-VBG  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
-\u2018end\u2019  JJS  I-JJS  I-CONTRAST
+\\u2018end\\u2019  NN  I-NN  I-CONTRAST
 goal  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 
@@ -2508,8 +2508,8 @@ present  JJ  I-JJ  I-CONTRAST
 state  NN  I-NN  I-CONTRAST
 or  CC  I-CC  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
-\\u2018status  NN  I-NN  I-CONTRAST
-quo\\u2019  NN  I-NN  I-CONTRAST
+\\\\u2018status  NN  I-NN  I-CONTRAST
+quo\\\\u2019  NN  I-NN  I-CONTRAST
 .  PCT  I-PCT  I-CONTRAST
 Thinking  VBG  I-VBG  I-CONTRAST
 about  IN  I-IN  I-CONTRAST
@@ -2742,7 +2742,7 @@ on  IN  I-IN  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
 process  NN  I-NN  I-CONTRAST
 or  CC  I-CC  I-CONTRAST
-\\u2018means\\u2019  NNS  I-NNS  I-CONTRAST
+\\\\u2018means\\\\u2019  NN  I-NN  I-CONTRAST
 whereas  IN  O  O
 Effectiveness  NN  B-NN  B-SUBJECT
 focuses  VBZ  I-VBZ  I-CONTRAST
