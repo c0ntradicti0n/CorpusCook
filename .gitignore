@@ -6,7 +6,6 @@ cache
 differencebetween
 tests
 venv
-*.tar.gz
 *.pyc
 *.pyx
 *.png
