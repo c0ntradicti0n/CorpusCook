@@ -9,7 +9,7 @@ pytest==3.0.6
 openpyxl
 addict
 python-Levenshtein
-tesserocr
+# tesserocr
 autocorrect
 parsley
 pyrata
