@@ -95,7 +95,7 @@ class Client:
         self.send_message(msg=json.dumps(command))
 
     def connect_to_server(self):
-        reactor.connectTCP('localhost', 8000, EchoClientFactory(app=self.app, client=self))
+        reactor.connectTCP('localhost', 80, EchoClientFactory(app=self.app, client=self))
 
     def on_connection(self, connection):
         self.print_message("Connected successfully!")
