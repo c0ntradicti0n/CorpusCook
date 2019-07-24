@@ -47,7 +47,7 @@ class Echo(protocol.Protocol):
 
 
     def dataReceived(self, data):
-        "As soon as any data is received, write result back."
+        data = data.decode('utf-8')
         print ('command was: %s' % (pprint.pformat(data)))
         if '}{' in str(data):
             print ('double command!')
@@ -60,7 +60,6 @@ class Echo(protocol.Protocol):
         except json.decoder.JSONDecodeError:
             print ('not a valid command')
             return
-
 
         print ('Is this a json-value?', 'command' in json_msg)
 
@@ -80,7 +79,7 @@ class Echo(protocol.Protocol):
                 'error': 'command not in command list:\n%s' % (pprint.pformat(routing_protocol_client_to_server)),
             }
 
-        self.transport.write(json.dumps(result).encode('latin-1'))
+        self.transport.write(json.dumps(result).encode('utf-8'))
 
 
 def main():

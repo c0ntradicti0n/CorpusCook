@@ -33,6 +33,8 @@ class EchoClient(protocol.Protocol):
         self.factory.client.on_connection(self.transport)
 
     def dataReceived(self, data):
+        data = data.decode('utf-8')
+        print (type(data))
         print(data)
         commands = re.findall(r'({[^{}]+}|"None")', str(data))
         for c in commands:
@@ -95,7 +97,7 @@ class Client:
         self.send_message(msg=json.dumps(command))
 
     def connect_to_server(self):
-        reactor.connectTCP('134.76.20.154', 1080, EchoClientFactory(app=self.app, client=self))
+        reactor.connectTCP('134.76.20.154', 80, EchoClientFactory(app=self.app, client=self))
 
     def on_connection(self, connection):
         self.print_message("Connected successfully!")
