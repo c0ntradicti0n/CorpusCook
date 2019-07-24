@@ -80,7 +80,7 @@ class Echo(protocol.Protocol):
 def main():
     factory = protocol.ServerFactory()
     factory.protocol = Echo
-    reactor.listenTCP(1024, factory)
+    reactor.listenTCP(1080, factory)
     reactor.run()
 
 
