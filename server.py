@@ -55,7 +55,13 @@ class Echo(protocol.Protocol):
             for c in commands:
                 self.dataReceived(c)
             return
-        json_msg = json.loads(data)
+        try:
+            json_msg = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            print ('not a valid command')
+            return
+
+
         print ('Is this a json-value?', 'command' in json_msg)
 
         if 'command' in json_msg and json_msg['command'] in routing_protocol_client_to_server:
