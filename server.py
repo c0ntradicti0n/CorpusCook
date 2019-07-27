@@ -63,7 +63,7 @@ class Echo(protocol.Protocol):
             logging.error('not a valid command, ignoring')
             return
 
-        logging.info ("".join('Is this a json-value?', 'command' in json_msg))
+        logging.info (" ".join(['Is this a json-value?', 'command' in json_msg]))
 
         if 'command' in json_msg and json_msg['command'] in routing_protocol_client_to_server:
             try:
