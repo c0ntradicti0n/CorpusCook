@@ -23,10 +23,6 @@ class Model:
 
     def predict(self, sentence):
         results = self.model.predict_json({"sentence": sentence})
-        print (results["tags"])
-        partitions = results["tags"]
-        print ("PARTITIONS BIOUL", partitions)
         tags = list(Corpus.bioul_to_bio(results["tags"]))
-        print ('BIO tags', tags)
         return list(zip(results["words"], tags))
 
