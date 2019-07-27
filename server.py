@@ -7,13 +7,13 @@ import traceback
 from human_in_loop.corpus import Corpus
 from human_in_loop.model import Model
 from human_in_loop.sampler import Sampler
+from helpers.color_logger import *
 
 model = Model(model_path="models/model.tar.gz")
 corpus = Corpus(path='hil19.conll3')
 sampler = Sampler(sample_file='server_samples_bin.txt')
 
 import regex as re
-
 
 routing_protocol_client_to_server = {
     'make_prediction':
@@ -50,9 +50,9 @@ class Echo(protocol.Protocol):
     def dataReceived(self, data):
         if not isinstance(data, str):
             data = data.decode('utf-8')
-        print ('command was: %s' % (pprint.pformat(data)))
+        logging.info ('command was: %s' % (pprint.pformat(data)))
         if '}{' in str(data):
-            print ('double command!')
+            logging.warning('double command!')
             commands = re.findall(r'({[^{}]+})', str(data))
             for c in commands:
                 self.dataReceived(c)
@@ -60,17 +60,17 @@ class Echo(protocol.Protocol):
         try:
             json_msg = json.loads(data)
         except json.decoder.JSONDecodeError:
-            print ('not a valid command')
+            logging.error('not a valid command, ignoring')
             return
 
-        print ('Is this a json-value?', 'command' in json_msg)
+        logging.info ("".join('Is this a json-value?', 'command' in json_msg))
 
         if 'command' in json_msg and json_msg['command'] in routing_protocol_client_to_server:
             try:
                 result = routing_protocol_client_to_server[json_msg['command']]['fun'](json_msg)
             except Exception as e:
                 result = traceback.format_exc() + '\n\n\n BUT SERVER CONTINUES'
-            print (result)
+            logging.info(print (result))
 
             if 'except' in routing_protocol_client_to_server[json_msg['command']]:
                 if not result:
