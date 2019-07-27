@@ -22,7 +22,8 @@ routing_protocol_client_to_server = {
         },
     'deliver_sample':
         {'fun': lambda x: sampler.deliver_sample(),
-         'answer': 'got_sample'
+         'answer': 'got_sample',
+         'except': 'make_new_samples'
          },
     'save_sample':
         {'fun': lambda x: sampler.add_to_library(x['text'])},
@@ -47,7 +48,8 @@ class Echo(protocol.Protocol):
 
 
     def dataReceived(self, data):
-        data = data.decode('utf-8')
+        if not isinstance(data, str):
+            data = data.decode('utf-8')
         print ('command was: %s' % (pprint.pformat(data)))
         if '}{' in str(data):
             print ('double command!')
@@ -69,6 +71,14 @@ class Echo(protocol.Protocol):
             except Exception as e:
                 result = traceback.format_exc() + '\n\n\n BUT SERVER CONTINUES'
             print (result)
+
+            if 'except' in routing_protocol_client_to_server[json_msg['command']]:
+                if not result:
+                    result = {
+                        'command': routing_protocol_client_to_server[json_msg['command']]['except'],
+                    }
+
+
             if 'answer' in routing_protocol_client_to_server[json_msg['command']]:
                 result = {
                     'command': routing_protocol_client_to_server[json_msg['command']]['answer'],
