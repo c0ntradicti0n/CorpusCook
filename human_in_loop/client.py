@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 import pprint
 import traceback
+from helpers.color_logger import *
 
 import regex as re
 from kivy.support import install_twisted_reactor
@@ -45,7 +46,7 @@ class EchoClient(protocol.Protocol):
         try:
             json_msg = json.loads(data)
         except json.decoder.JSONDecodeError as e:
-            print (data)
+            logging.error(data)
             raise e
 
         if json_msg is None:
@@ -55,10 +56,12 @@ class EchoClient(protocol.Protocol):
             try:
                 routing_protocol_server_to_client[json_msg['command']]['fun'](self.factory.app, json_msg['result'])
             except Exception as e:
-                routing_protocol_server_to_client[json_msg['command']]['except'](self.factory.app)
                 result = pprint.pformat(traceback.format_exc()) + '\n\n\n But client continues'
+                logging.debug(result)
+                raise
+                routing_protocol_server_to_client[json_msg['command']]['except'](self.factory.app)
         else:
-            print ('Not a valid answer from the server; no command or command not in routing_protocol_server_to_client %s'
+            logging.error('Not a valid answer from the server; no command or command not in routing_protocol_server_to_client %s'
                    % pprint.pformat(data))
 
 
@@ -93,7 +96,7 @@ class Client:
             'command':command,
             **kwargs
         }
-        print (json.dumps(command))
+        logging.debug(json.dumps(command))
         self.send_message(msg=json.dumps(command))
 
     def connect_to_server(self):
@@ -108,5 +111,5 @@ class Client:
             self.connection.write(msg.encode('utf-8'))
 
     def print_message(self, msg):
-        print (msg)
+        logging.info(msg)
 

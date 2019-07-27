@@ -1,6 +1,18 @@
 import itertools
+import pprint
+from helpers.color_logger import *
 from collections import Counter
 from time import sleep
+from typing import Dict, Any, Tuple, List
+from collections import OrderedDict as OD
+
+
+def get_dict_diffs(a: Dict[str, Any], b: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any]]:
+    added_to_b_dict: Dict[str, Any] = {k: b[k] for k in set(b) - set(a)}
+    removed_from_a_dict: Dict[str, Any] = {k: a[k] for k in set(a) - set(b)}
+    common_dict_a: Dict[str, Any] = {k: a[k] for k in set(a) & set(b)}
+    common_dict_b: Dict[str, Any] = {k: b[k] for k in set(a) & set(b)}
+    return added_to_b_dict, removed_from_a_dict, common_dict_a, common_dict_b
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -30,17 +42,56 @@ class Annotation_Screen(Screen):
 class Manipulation_Screen(Screen):
     pass
 
+from kivy.lang import Builder
+from kivy.properties import StringProperty, DictProperty, NumericProperty, BooleanProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.popup import Popup
+
+class MessageBox(Popup):
+    message = StringProperty()
+
+class RecycleViewRow(BoxLayout):
+    id = StringProperty()
+    kind = StringProperty()
+    start = NumericProperty()
+    end = NumericProperty()
+    length = NumericProperty()
+    able = BooleanProperty()
+
+
+class SliderView(RecycleView):
+    def __init__(self, **kwargs):
+        super(SliderView, self).__init__(**kwargs)
+
+    def message_box(self, message):
+        p = MessageBox()
+        p.message = message
+        p.open()
+        print('test press: ', message)
+
 class Sample_Screen(Screen):
     pass
 
-class SpanSlider(Slider):
+def collect_data_from_box(b):
+    return OD({
+        'able': b.ids.active_or_not.active,
+        'kind':b.kind,
+        'start':int(b.ids.start.value),
+        'end': int(b.ids.end.value),
+        'length': int(b.ids.end.max),
+        'id':'asdfgh'
+    })
 
+class SpanSlider(Slider):
     def on_touch_move(self, touch):
-        self.parent.parent.manager.update_manip_display()
+        self.parent.parent.parent.parent.parent.parent.update_manip_display()
 
     def on_touch_up(self, touch):
-        self.parent.parent.manager.update_manip_display()
-        self.parent.parent.manager.final_version = self.parent.parent.manager.new_annotation
+        root = self.get_root_window().children[0]
+        boxes = list(self.parent.parent.children)
+        new_data = [collect_data_from_box(b) for b in boxes]
+        root.update_from_data(new_data)
 
 class RootWidget(ScreenManager):
 
@@ -49,29 +100,14 @@ class RootWidget(ScreenManager):
         super().__init__(*args, **kwargs)
         global samples_path
         global corpus_path
+        self.last_data = [{}]
 
         self.client = Client(app=self)
-
-        self.sliders = \
-            {'SUBJECT': [(self.ids.manip.ids.sliderS1A, self.ids.manip.ids.sliderS2A),
-                         (self.ids.manip.ids.sliderS1B, self.ids.manip.ids.sliderS2B)],
-             'CONTRAST': [(self.ids.manip.ids.sliderC1A, self.ids.manip.ids.sliderC2A),
-                         (self.ids.manip.ids.sliderC1B, self.ids.manip.ids.sliderC2B)]
-            }
-        self.part_sliders = \
-            {'A': [('SUBJECT', self.ids.manip.ids.sliderS1A, self.ids.manip.ids.sliderS2A),
-                   ('CONTRAST', self.ids.manip.ids.sliderC1A, self.ids.manip.ids.sliderC2A)
-                   ],
-             'B': [('SUBJECT', self.ids.manip.ids.sliderS1B, self.ids.manip.ids.sliderS2B),
-                   ('CONTRAST', self.ids.manip.ids.sliderC1B, self.ids.manip.ids.sliderC2B)]
-             }
-
         self.sampler = Sampler(samples_path) # expands the sample stack
         self.difference_pages = self.sampler.next_page()
         self.upmarker = UpMarker()
         self.corpus = Corpus(corpus_path)
-
-        self.textstore = None # diminishes the sample stack
+        self.textstore = None
 
         self.sampler_proceed()
 
@@ -83,7 +119,7 @@ class RootWidget(ScreenManager):
 
         self.client.commander('save_sample', text=text)
         self.sampler.add_to_library(text)
-        print("Adding to sample corpus")
+        logging.info("adding sample to library")
         self.current = "Sample_Screen"
 
     def sampler_proceed(self):
@@ -104,7 +140,7 @@ class RootWidget(ScreenManager):
         if ok==None:
             print ('There was a problem with the annotation. Tagged was:\n\n %s' % (self.final_version))
             self.current = "Manipulation_Screen"
-        print("Adding to corpus")
+        logging.info("Adding to corpus")
         self.take_next()
         sleep(0.2)
         self.current = "Annotation_Screen"
@@ -133,39 +169,7 @@ class RootWidget(ScreenManager):
         self.current = "Manipulation_Screen"
 
     def update_manip_display(self):
-        self.spans = [
-            (group, [(kind, int(start_sl.value), int(end_sl.value)) for kind, start_sl, end_sl in sliders])
-           for group, sliders in self.part_sliders.items()
-        ]
-        new_annotation = [(token.text,'O') for token in self.doc]
-
-        self.adjust_slider_len(new_annotation)
-
-        for g, spans in self.spans:
-
-            # get the minimum position of the span to make the beginning span tag in the BIO-annotation scheme
-            all_starts_of_span = [start for kind, start, end in spans]
-            beginning = min(all_starts_of_span)
-            print (beginning, spans)
-
-            for kind, start, end in spans[::-1]:
-                print (kind, start == beginning)
-                # read slist of spans backwards to overwrie the contrast with the subject tags
-                for i in range(start, end):
-                    if i < len(new_annotation):
-                        new_annotation[i] = (new_annotation[i][0], "-".join(['B' if i == beginning else 'I', kind]))
-                    else:
-                        print ('out of range span annotation> %d >= %d' % (i, len(new_annotation)))
-
-        span_delims = [t[1][0] for t in new_annotation]
-        print (span_delims)
-        count = Counter(span_delims)
-        if not count['B'] == 2:
-            print('Annotation contains wrong number of spanning tags!!! %s' % str(count))
-
-        self.new_annotation = new_annotation
-        self.ids.manip.ids.spans.text = str(self.spans)
-        self.ids.manip.ids.sample.text = self.upmarker.markup(new_annotation)
+        self.display_sample()
 
     def adjust_slider_len(self, new_annotation):
         l = len(new_annotation)
@@ -177,42 +181,60 @@ class RootWidget(ScreenManager):
         self.ids.annot.ids.sample.text = markedup_sentence
         self.ids.manip.ids.sample.text = markedup_sentence
 
+    def update_sliders_from_spans(self):
+        paired_spans = list(Corpus.compute_structured_spans(self.final_version))
+        length =  len(self.final_version)
+
+        self.sliders = {}
+        self.part_sliders = {}
+        self.ids.manip.ids.spansliderview.data = []
+
+        for g, spans in enumerate(paired_spans):
+            self.ids.manip.ids.spansliderview.data.append(
+                [
+                    OD({
+                        'kind': kind,
+                        'id': str(g)+str(i),
+                        'start':start,
+                        'end': end,
+                        'able':True,
+                        'length':length,
+                    })
+                    for i, (kind, (start, end), annotation) in enumerate(spans)
+                ])
+        self.ids.manip.ids.spansliderview.data = flatten(self.ids.manip.ids.spansliderview.data)
+        self.ids.manip.ids.spansliderview.refresh_from_data()
+
     def update_sliders(self):
+        recent_data = list(self.ids.manip.ids.spansliderview.data_model.data)
+        self.update_from_data(recent_data)
 
-        spans = list(Corpus.compute_spans(self.final_version))
-        print ([sp[1] for sp in spans])
-        spans = sorted(spans, key= lambda x: x[0])
-        span2slider = (
-            itertools.zip_longest(self.sliders[g], l)
-            for g, l in
-            itertools.groupby(spans, key=lambda x: x[0])
-        )
+    def sort_data(self, data):
+        return sorted(data, key=lambda x: x['start'])
 
-        self.adjust_slider_len(self.doc)
+    def update_from_data(self, data):
+        print(data)
+        data = self.sort_data(data)
+        self.ids.manip.ids.spansliderview.data = data
+        self.ids.manip.ids.spansliderview.refresh_from_data()
+        tokens = [t[0] for t in self.final_version]
+        paired_spans = self.corpus.pair_spans(data)
+        new_annotation = self.corpus.annotation_from_spans(tokens=tokens, paired_spans=paired_spans)
+        self.final_version = new_annotation
+        self.annotated_sample = new_annotation
+        self.check_annotation(new_annotation)
+        self.display_sample()
 
-        l = len(self.doc)
-        for annotation_group in span2slider:
-            for start_end_slider, span in annotation_group:
-
-                # if there are more annotations than sliders, the default is non, that is no tuples and so it would
-                # interrupt here
-                if not start_end_slider:
-                    continue
-                (slider_start, slider_end) = start_end_slider
-
-                if span:
-                    (g, (start, end), annotation) = span
-                    slider_start.value = start
-                    slider_end.value = end
-                else:
-                    slider_start.value = l-3
-                    slider_end.value = l-1
+    def check_annotation(self, annotation):
+        span_delims = [t[1][0] for t in annotation]
+        print(span_delims)
+        count = Counter(span_delims)
+        if not count['B'] == 2:
+            print('Annotation contains wrong number of spanning tags!!! %s' % str(count))
 
     def take_next(self):
         if self.textstore == None:
-            "First we have to load the model... that may take long time"
             self.textstore = TextStore(samples_path)
-
         self.client.commander('deliver_sample')
 
     def got_sample(self, text=''):
@@ -227,9 +249,8 @@ class RootWidget(ScreenManager):
         self.annotated_sample = annotation
         self.doc = nlp(self.sentence)
         self.final_version = self.annotated_sample
-        self.update_sliders()
+        self.update_sliders_from_spans()
         self.display_sample()
-
 
 Builder.load_file("HumanInLoop.kv")
 

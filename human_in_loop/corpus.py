@@ -1,22 +1,36 @@
 import itertools
 from collections import Counter
+from typing import Dict, List, Any
 
 import more_itertools
 import spacy
 import regex as re
+from nltk import flatten
 
 nlp = spacy.load("en_core_sci_sm")
-
 
 conll_line = re.compile(r"([^\s]+)  ([^\s]+)  ([^\s]+)  ([^\s]+)")
 
 only_abc = re.compile('[^a-zA-Z0-9]|_')
+
+
 def re_replace_abc(string):
     return re.sub(only_abc, '', string)
 
+
 dots = re.compile('[,\.;:?!]')
+
+
 def re_replace_dot(string):
     return re.sub(dots, 'PCT', string)
+
+
+def ranges(nums):
+    nums = sorted(set(nums))
+    gaps = [[s, e] for s, e in zip(nums, nums[1:]) if s + 1 < e]
+    edges = iter(nums[:1] + sum(gaps, []) + nums[-1:])
+    return [(s, e + 1) for s, e in zip(edges, edges)]
+
 
 class Corpus:
     def __init__(self, path):
@@ -40,7 +54,7 @@ class Corpus:
         doc = nlp(sentence)
         poss = [re_replace_abc(re_replace_dot(tok.tag_)) for tok in doc]
         with open(self.path, "a+") as f:
-            combos  = list(zip(annotation, poss))
+            combos = list(zip(annotation, poss))
 
             conll_lines = self.token_pos_tag_to_conll3(combos)
             if conll_lines == None:
@@ -74,14 +88,11 @@ class Corpus:
         assert (all(sd in ['B', 'I', 'O'] for sd in span_delims))
         count = Counter(span_delims)
         if not count['B'] == 2:
-
-
-            print ('Annotation contains wrong number of spanning tags!!! %s' % str(count))
+            print('Annotation contains wrong number of spanning tags!!! %s' % str(count))
             return None
         assert count['B'] == 2
 
         return conll_lines
-
 
     def bioul_to_bio(bioul_tags):
         """ Make BIOUL coding scheme to BIO
@@ -101,7 +112,7 @@ class Corpus:
         :param bioul_tags:
         :return:
         """
-        assert (all([x[0] in ['B','I', 'O', 'U', 'L'] for x in bioul_tags]))
+        assert (all([x[0] in ['B', 'I', 'O', 'U', 'L'] for x in bioul_tags]))
         started = False
         for t in bioul_tags:
             span_tag, _, annotag = t.partition('-')
@@ -116,12 +127,12 @@ class Corpus:
                     else:
                         started = True
                         span_tag = 'B'
-                elif span_tag in ['B'] :
+                elif span_tag in ['B']:
                     if started:
                         span_tag = 'I'
                     else:
                         started = True
-                        span_tag = 'B' # is already 'B', but for completeness
+                        span_tag = 'B'  # is already 'B', but for completeness
                 elif span_tag in ['L']:
                     span_tag = 'I'
                     started = False
@@ -134,7 +145,7 @@ class Corpus:
                         started = True
                         span_tag = 'B'
 
-                elif span_tag in ['B'] :
+                elif span_tag in ['B']:
                     if started:
                         span_tag = 'I'
                     else:
@@ -143,8 +154,7 @@ class Corpus:
                 elif span_tag in ['L']:
                     span_tag = 'I'
 
-            yield "".join([span_tag,_, annotag])
-
+            yield "".join([span_tag, _, annotag])
 
     def compute_spans(annotations):
         ''' Get spans bases on spans annotated with the BIOL tagging scheme
@@ -192,6 +202,8 @@ class Corpus:
                    (47, ('and', 'I-CONTRAST')),
                    (48, ('neuropeptides', 'I-CONTRAST')),
                    (49, ('”', 'L-CONTRAST'))])]
+        >>> annotation = [["The", "B-CONTRAST"], ["key", "I-CONTRAST"], ["difference", "I-CONTRAST"], ["between", "I-CONTRAST"], ["distillation", "I-CONTRAST"], ["and", "I-CONTRAST"], ["condensation", "I-CONTRAST"], ["is", "O"], ["that", "O"], ["the", "B-CONTRAST"], ["distillation", "I-SUBJECT"], ["is", "I-CONTRAST"], ["a", "I-CONTRAST"], ["separation", "I-CONTRAST"], ["technique", "I-CONTRAST"], ["whereas", "O"], ["the", "B-CONTRAST"], ["condensation", "I-SUBJECT"], ["is", "I-CONTRAST"], ["a", "I-CONTRAST"], ["process", "I-CONTRAST"], ["of", "I-CONTRAST"], ["changing", "I-CONTRAST"], ["the", "I-CONTRAST"], ["phase", "I-CONTRAST"], ["of", "I-CONTRAST"], ["matter", "I-CONTRAST"], [".", "O"]]
+        >>> pprint.pprint(list(Corpus.compute_spans(annotation))) # doctest: +NORMALIZE_WHITESPACE
 
         :param annotations: list of words and tags
         :return:
@@ -199,28 +211,40 @@ class Corpus:
 
         # Divide by 'B'eginning tags
         parts = list(Corpus.compute_parts(annotations))
-        print (parts)
 
         # Get the spans from the parts: parts mean, that if the 'B' tag appeared, all tokens, that come until the next 'B'
         # can are of the same kind
 
-        #spans = self.spans_from_partitions(parts)
+        # spans = self.spans_from_partitions_flat(parts)
 
-        yield from Corpus.spans_from_partitions(parts)
+        yield from Corpus.spans_from_partitions_flat(parts)
+
+    def compute_structured_spans(annotations):
+        # Divide by 'B'eginning tags
+        parts = list(Corpus.compute_parts(annotations))
+        # get single spans within these parts
+        return list(Corpus.spans_from_partitions_nested(parts))
 
     def compute_parts(annotations):
         return [part
-                for part in more_itertools.split_before (enumerate(annotations), lambda x: x[1][1][0] == 'B')
-                if part[0][1][1][0]=='B']
+                for part in more_itertools.split_before(enumerate(annotations), lambda x: x[1][1][0] == 'B')
+                if part[0][1][1][0] == 'B']
 
-    def spans_from_partitions(parts):
+    def spans_from_partitions_flat(parts):
         for part in parts:
+            spans = Corpus.spans_from_part(part)
+            yield from spans
 
-            part = Corpus.spans_from_part(part)
-            yield from part
+    def spans_from_partitions_nested(parts):
+        for part in parts:
+            spans = list(Corpus.spans_from_part(part))
+            yield spans
 
     def kind_from_tag(tag):
-        return tag[1][1][2:]
+        try:
+            return tag[1][1][2:]
+        except IndexError:
+            raise IndexError
 
     def spans_from_part(part):
         part = sorted(part, key=Corpus.kind_from_tag)
@@ -229,10 +253,40 @@ class Corpus:
             for kind, tokens in itertools.groupby(part, key=Corpus.kind_from_tag)
         }
         for kind, tokens in partitions.items():
-            if kind not in ['O', ''] :
+            if kind not in ['O', '']:
                 positions = sorted([t[0] for t in tokens])
 
-                yield (kind, (min(positions), max(positions)+1), tokens)
+                yield (kind, (min(positions), max(positions) + 1), tokens)
 
+    def pair_spans(self, spans: List[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
+        indices = sorted(list(set(flatten([list(range(d['start'], d['end'])) for d in spans if d['able']]))))
+        rs = ranges(indices)
+        paired_spans = [
+            [
+                d
+                for d in spans
+                if d['start'] >= r_start and d['end'] <= r_end
+                   and
+                d['able']
+            ]
+            for r_start, r_end in rs
+        ]
+        return paired_spans
 
+    def annotation_from_spans(self, tokens: List[str], paired_spans: List[List[Dict[str, Any]]]):
+        tags = ['O'] * len(tokens)
+        sorted_paired_spans = sorted(paired_spans,
+                                     key=lambda l:
+                                     min(l, key=lambda x: x['start'])['start'])
 
+        # read list of spans backwards to overwrie the contrast with the subject tags
+        for spans in sorted_paired_spans:
+            beginning = min(spans, key=lambda x: x['start'])['start']
+            for d in spans[::-1]:
+                if d['able']:
+                    assert (d['end'] < len(tokens))
+                    for i in range(d['start'], d['end']):
+                        tags[i] = "-".join(['B' if i == beginning else 'I', d['kind']])
+
+        annotation = list(zip(tokens, tags))
+        return annotation
