@@ -66,7 +66,7 @@ def main():
     from twisted.internet.protocol import Factory
     protofacto = Factory()
     protofacto.protocol = AnnotationCloud
-    reactor.listenTCP(5180, protofacto)
+    reactor.listenTCP(1024, protofacto)
     logging.warning('Server started, waiting for commands')
     reactor.run()
 
