@@ -68,7 +68,7 @@ class PickTab:
         return table
 
     def miss_out_logo_in_corner(self, table, logo_string, cell_coords=(-1, -1)):
-        ''' right bottom corner often you can read the logo: 'differencebetween_crawler.net with a wrong detected  tab border,
+        ''' right bottom corner often you can read the logo: 'differencebetween.net with a wrong detected  tab border,
         delete it by fuzzy matching on the end of the string. '''
         right_bottom = table[cell_coords[0]][cell_coords[1]]
         if ratio(right_bottom[-30:], logo_string) > 0.5:

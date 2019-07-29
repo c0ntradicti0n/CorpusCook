@@ -14,7 +14,7 @@ with PyTessBaseAPI() as api:
 from PIL import Image
 from tesserocr import PyTessBaseAPI, RIL
 
-image = Image.open('./data/cdn.differencebetween_crawler.net/wp-content/uploads/2019/02/Acetone-vs-Bleach.jpg.png')
+image = Image.open('./data/cdn.differencebetween.net/wp-content/uploads/2019/02/Acetone-vs-Bleach.jpg.png')
 with PyTessBaseAPI() as api:
     api.SetImage(image)
     box = {'x': 23, 'y': 516, 'w': 704, 'h': 216}

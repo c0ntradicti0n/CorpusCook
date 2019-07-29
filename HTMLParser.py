@@ -386,7 +386,7 @@ class DifferenceBetweenHtmlParser:
         return "".join([path, name, extension])
 
     def process_generator(self):
-        # iterate randomly through the differencebetween_crawler backup and give some structured textversion of that pages
+        # iterate randomly through the differencebetween backup and give some structured textversion of that pages
         relevant_files_paths = list(get_files_from_recursive_path(self.input_dir + self.input_html_file_filter))
         random.shuffle(relevant_files_paths)
 
@@ -482,44 +482,44 @@ class TestHtmlParser(unittest.TestCase):
     # html-tables, picture-tables with 3 or 2 columns
 
     # VERSUS 3,2
-    #    3: http%3A%2F%2Fwww.differencebetween_crawler.net%2Flanguage%2Fdifference-between-conference-and-seminar%2F.html
-    #    2: http%3A%2F%2Fwww.differencebetween_crawler.net%2Flanguage%2Fdifference-between-desert-and-dessert-2%2F.html
+    #    3: http%3A%2F%2Fwww.differencebetween.net%2Flanguage%2Fdifference-between-conference-and-seminar%2F.html
+    #    2: http%3A%2F%2Fwww.differencebetween.net%2Flanguage%2Fdifference-between-desert-and-dessert-2%2F.html
     # VS 3,2
-    #    3: http%3A%2F%2Fwww.differencebetween_crawler.net%2Fscience%2Fdifference-between-beaker-and-graduated-cylinder%2F.html
-    #    2: http%3A%2F%2Fwww.differencebetween_crawler.net%2Fobject%2Fdifference-between-daylight-and-soft-white-led-bulbs%2F.html
+    #    3: http%3A%2F%2Fwww.differencebetween.net%2Fscience%2Fdifference-between-beaker-and-graduated-cylinder%2F.html
+    #    2: http%3A%2F%2Fwww.differencebetween.net%2Fobject%2Fdifference-between-daylight-and-soft-white-led-bulbs%2F.html
     # tr-tl 3,2
-    #    3: http%253A%252F%252Fwww.differencebetween_crawler.net%252Fscience%252Fhealth%252Fdifference-between-tumors-and-polyps%252F.html
-    #    2: http%253A%252F%252Fwww.differencebetween_crawler.net%252Fscience%252Fhealth%252Fdifference-between-pork-and-bacon%252F%253Freplytocom%253D7343477.html
+    #    3: http%253A%252F%252Fwww.differencebetween.net%252Fscience%252Fhealth%252Fdifference-between-tumors-and-polyps%252F.html
+    #    2: http%253A%252F%252Fwww.differencebetween.net%252Fscience%252Fhealth%252Fdifference-between-pork-and-bacon%252F%253Freplytocom%253D7343477.html
 
     def test_VERSUS_3(self):
-        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween_crawler.net%2Flanguage%2Fdifference-between-conference-and-seminar%2F.html"
+        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween.net%2Flanguage%2Fdifference-between-conference-and-seminar%2F.html"
         gold_path = path + '.gold'
         self.run_htmlparser(path, gold_path)
     def test_VERSUS_2(self):
-        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween_crawler.net%2Flanguage%2Fdifference-between-desert-and-dessert-2%2F.html"
+        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween.net%2Flanguage%2Fdifference-between-desert-and-dessert-2%2F.html"
         gold_path = path + '.gold'
         self.run_htmlparser(path, gold_path)
 
     def test_vs_3(self):
-        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween_crawler.net%2Fscience%2Fdifference-between-beaker-and-graduated-cylinder%2F.html"
+        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween.net%2Fscience%2Fdifference-between-beaker-and-graduated-cylinder%2F.html"
         gold_path = path + '.gold'
         self.run_htmlparser(path, gold_path)
     def test_vs_2(self):
-        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween_crawler.net%2Fobject%2Fdifference-between-daylight-and-soft-white-led-bulbs%2F.html"
+        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween.net%2Fobject%2Fdifference-between-daylight-and-soft-white-led-bulbs%2F.html"
         gold_path = path + '.gold'
         self.run_htmlparser(path, gold_path)
 
     def test_tab_3(self):
-        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween_crawler.net%2Fscience%2Fhealth%2Fdifference-between-tumors-and-polyps%2F.html"
+        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween.net%2Fscience%2Fhealth%2Fdifference-between-tumors-and-polyps%2F.html"
         gold_path = path + '.gold'
         self.run_htmlparser(path, gold_path)
     def test_tab_2(self):
-        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween_crawler.net%2Fscience%2Fhealth%2Fdifference-between-pork-and-bacon%2F.html"
+        path      = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween.net%2Fscience%2Fhealth%2Fdifference-between-pork-and-bacon%2F.html"
         gold_path = path + '.gold'
         self.run_htmlparser(path, gold_path)
 
     def test_muhammad(self):
-        path = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween_crawler.net%2Fmiscellaneous%2Fsports-miscellaneous%2Fdifference-between-ali-and-frazier%2F.html"
+        path = "./tests/htmlparser/http%3A%2F%2Fwww.differencebetween.net%2Fmiscellaneous%2Fsports-miscellaneous%2Fdifference-between-ali-and-frazier%2F.html"
         gold_path = path + '.gold'
         self.run_htmlparser(path, gold_path)
 
