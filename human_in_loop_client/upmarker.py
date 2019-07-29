@@ -2,11 +2,16 @@ class UpMarker:
     def __init__(self):
         pass
 
+    # [{'kind': 'CONTRAST'}, {'kind':'SUBJECT'},  {'kind':'ASPECT'},  {'kind':'CONTRAST_MARKER'},
+    # {'kind':'SUBJECT_EXCEPT'}, {'kind':'COMPARISON_MARKER'}]
+    #
     annotation_dict = {
-        'SUBJECT': ('b','58C550'),
-        'CONTRAST': ('i', 'BD7A48'),
-        'ASPECT': ('sub', '589ACC'),
-        'MARKER': ('ref', 'A845B0')
+        'SUBJECT': ('b','24316C'),
+        'CONTRAST': ('b', 'A84138'),
+        'ASPECT': ('b', '712660'),
+        'CONTRAST_MARKER': ('b', '4A4A19'),
+        'SUBJECT_EXCEPT': ('b', '287079'),
+        'COMPARISON_MARKER': ('b', '16413A')
     }
 
     def markup_word(self, word, anno_tag):

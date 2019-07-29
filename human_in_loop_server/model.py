@@ -8,7 +8,7 @@ import spacy_embedder.spacy_embedder
 from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
 import more_itertools as mit
 
-from human_in_loop.corpus import Corpus
+from human_in_loop_client.corpus import Corpus
 
 def split_list_on_lambda(l, lam):
     ''' split a list of anything based on a lambda, so that the splitting element is the first of each group '''

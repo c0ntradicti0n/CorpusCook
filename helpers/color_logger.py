@@ -1,7 +1,6 @@
 import sys
 import logging
 
-
 class _AnsiColorizer(object):
     """
     A colorizer is an object that loosely wraps around a stream, allowing

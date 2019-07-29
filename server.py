@@ -1,104 +1,74 @@
-import json
-import pprint
+from human_in_loop_client.annotation_protocol import *
 
-import sys
-import traceback
-
-from human_in_loop.corpus import Corpus
-from human_in_loop.model import Model
-from human_in_loop.sampler import Sampler
-from helpers.color_logger import *
+from human_in_loop_server.model import Model
+from human_in_loop_server.sampler import Sampler
+from human_in_loop_client.corpus import Corpus
 
 model = Model(model_path="models/model.tar.gz")
-corpus = Corpus(path='hil19.conll3')
+corpus = Corpus(path='server_annotations.conll3')
 sampler = Sampler(sample_file='server_samples_bin.txt')
+difference_pages = sampler.next_page()
 
-import regex as re
+import pprint
+from helpers.color_logger import *
 
-routing_protocol_client_to_server = {
-    'make_prediction':
-        {'fun': lambda x: model.predict(x['text']),
-         'answer': 'prediction'
-        },
-    'deliver_sample':
-        {'fun': lambda x: sampler.deliver_sample(),
-         'answer': 'got_sample',
-         'except': 'make_new_samples'
-         },
-    'save_sample':
-        {'fun': lambda x: sampler.add_to_library(x['text'])},
-    'save_a_complicated_sample':
-        {'fun': lambda x: sampler.complicated_sample(x['text'])},
-    'save_annotation':
-        {'fun': lambda x: corpus.write_sample(annotation=x['annotation'])},
-    'could_you_train?':
-        {'fun': lambda x: model.train()}
-}
+class AnnotationCloud(amp.AMP):
+    def log_before_after(self, what, before, after):
+        logging.info(what)
+        logging.info(pprint.pformat(before))
+        logging.info('-->')
+        logging.info(pprint.pformat(after))
 
+    @MakePrediction.responder
+    def makeprediction(self, text):
+        annotation = model.predict(text)
+        self.log_before_after('MakePrediction', text, annotation)
+        return {'annotation': annotation}
 
-# Copyright (c) Twisted Matrix Laboratories.
-# See LICENSE for details.
+    @DeliverSample.responder
+    def deliversample(self):
+        text = sampler.deliver_sample()
+        self.log_before_after('DeliverSample', None, text)
+        return {'text': text}
 
+    @SaveAnnotation.responder
+    def saveannotation(self, annotation):
+        corpus.write_sample(annotation)
+        self.log_before_after('SaveAnnotation', annotation, None)
+        return {'done': 'yes'}
 
-from twisted.internet import reactor, protocol
+    @SaveComplicated.responder
+    def savecomplicated(self, text):
+        sampler.complicated_sample(text)
+        self.log_before_after('SaveComplicated', text, None)
+        return {'done': 'yes'}
 
+    @SaveSample.responder
+    def savesample(self, text):
+        sampler.add_to_library(text)
+        self.log_before_after('SaveSample', text, None)
+        return {'done': 'yes'}
 
-class Echo(protocol.Protocol):
-    """This is just about the simplest possible protocol"""
-
-
-    def dataReceived(self, data):
-        if not isinstance(data, str):
-            data = data.decode('utf-8')
-        logging.info ('command was: %s' % (pprint.pformat(data)))
-        if '}{' in str(data):
-            logging.warning('double command!')
-            commands = re.findall(r'({[^{}]+})', str(data))
-            for c in commands:
-                self.dataReceived(c)
-            return
-        try:
-            json_msg = json.loads(data)
-        except json.decoder.JSONDecodeError:
-            logging.error('not a valid command, ignoring')
-            return
-
-        logging.info (" ".join(['Is this a json-value?', str('command' in json_msg)]))
-
-        if 'command' in json_msg and json_msg['command'] in routing_protocol_client_to_server:
+    @DeliverPage.responder
+    def deliverpage(self):
+        while True:
             try:
-                result = routing_protocol_client_to_server[json_msg['command']]['fun'](json_msg)
-            except Exception as e:
-                result = traceback.format_exc() + '\n\n\n BUT SERVER CONTINUES'
-            logging.info(print (result))
-
-            if 'except' in routing_protocol_client_to_server[json_msg['command']]:
-                if not result:
-                    result = {
-                        'command': routing_protocol_client_to_server[json_msg['command']]['except'],
-                    }
-
-
-            if 'answer' in routing_protocol_client_to_server[json_msg['command']]:
-                result = {
-                    'command': routing_protocol_client_to_server[json_msg['command']]['answer'],
-                    'result': result
-                }
-        else:
-            result = {
-                'error': 'command not in command list:\n%s' % (pprint.pformat(routing_protocol_client_to_server)),
-            }
-
-        self.transport.write(json.dumps(result).encode('utf-8'))
+               return {'text':next(difference_pages)['difference_text'].replace('\n',' ').replace('  ', ' ')}
+            except StopIteration:
+                raise FileNotFoundError(
+                    "No pages anymore")
+            # TODO
+            #  pages store empty: err callback to lead to generating more pages
 
 
 def main():
-    factory = protocol.ServerFactory()
-    factory.protocol = Echo
-    reactor.listenTCP(1080, factory)
+    from twisted.internet import reactor
+    from twisted.internet.protocol import Factory
+    protofacto = Factory()
+    protofacto.protocol = AnnotationCloud
+    reactor.listenTCP(1080, protofacto)
+    logging.warning('Server started, waiting for commands')
     reactor.run()
 
-
-# this only runs if the module was *not* imported
 if __name__ == '__main__':
     main()
