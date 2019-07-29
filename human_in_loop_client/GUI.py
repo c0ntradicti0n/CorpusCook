@@ -1,37 +1,33 @@
-import itertools
-import pprint
 from helpers.color_logger import *
 from collections import Counter
 from time import sleep
-from typing import Dict, Any, Tuple, List
 from collections import OrderedDict as OD
+from nltk import flatten
 
-
-def get_dict_diffs(a: Dict[str, Any], b: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any]]:
-    added_to_b_dict: Dict[str, Any] = {k: b[k] for k in set(b) - set(a)}
-    removed_from_a_dict: Dict[str, Any] = {k: a[k] for k in set(a) - set(b)}
-    common_dict_a: Dict[str, Any] = {k: a[k] for k in set(a) & set(b)}
-    common_dict_b: Dict[str, Any] = {k: b[k] for k in set(a) & set(b)}
-    return added_to_b_dict, removed_from_a_dict, common_dict_a, common_dict_b
+import kivy
+kivy.require('1.9.0')
+from kivy.config import Config
+Config.set('graphics', 'width', '2000')
+Config.set('graphics', 'height', '1500')
+Config.write()
+from kivy.core.window import Window
+Window.clearcolor = (1, 1, 1, 1)
 
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-import kivy
 from kivy.uix.slider import Slider
-from nltk import flatten
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.recycleview import RecycleView
 
-from human_in_loop.sampler import Sampler
-
-kivy.require('1.9.0')
-from kivy.config import Config
-Config.set('graphics', 'width', '2000')
-Config.set('graphics', 'height', '1000')
-
+from human_in_loop_server.sampler import Sampler
 from human_in_loop.corpus import Corpus, nlp
-from human_in_loop.textstore import TextStore
+from human_in_loop_server.textstore import TextStore
 from human_in_loop.upmarker import UpMarker
-from human_in_loop.client import Client
+from human_in_loop.client import AnnotationClient
+from human_in_loop.annotation_protocol import *
+
 
 samples_path = None
 corpus_path = None
@@ -42,14 +38,9 @@ class Annotation_Screen(Screen):
 class Manipulation_Screen(Screen):
     pass
 
-from kivy.lang import Builder
-from kivy.properties import StringProperty, DictProperty, NumericProperty, BooleanProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.recycleview import RecycleView
-from kivy.uix.popup import Popup
+class Sample_Screen(Screen):
+    pass
 
-class MessageBox(Popup):
-    message = StringProperty()
 
 class RecycleViewRow(BoxLayout):
     id = StringProperty()
@@ -59,50 +50,46 @@ class RecycleViewRow(BoxLayout):
     length = NumericProperty()
     able = BooleanProperty()
 
+class AnnotationManipulationRow(BoxLayout):
+    kind = StringProperty()
+
+    def more_annotation_of(self, kind):
+        self.get_root_window().children[0].more_annotation_of(kind)
+
+    def less_annotation_of(self, kind):
+        self.get_root_window().children[0].less_annotation_of(kind)
+
 
 class SliderView(RecycleView):
-    def __init__(self, **kwargs):
-        super(SliderView, self).__init__(**kwargs)
-
-    def message_box(self, message):
-        p = MessageBox()
-        p.message = message
-        p.open()
-        print('test press: ', message)
-
-class Sample_Screen(Screen):
     pass
 
-def collect_data_from_box(b):
-    return OD({
-        'able': b.ids.active_or_not.active,
-        'kind':b.kind,
-        'start':int(b.ids.start.value),
-        'end': int(b.ids.end.value),
-        'length': int(b.ids.end.max),
-        'id':'asdfgh'
-    })
+class AnnotationManipulationView(RecycleView):
+    pass
+
 
 class SpanSlider(Slider):
-    def on_touch_move(self, touch):
-        self.parent.parent.parent.parent.parent.parent.update_manip_display()
-
     def on_touch_up(self, touch):
         root = self.get_root_window().children[0]
         boxes = list(self.parent.parent.children)
-        new_data = [collect_data_from_box(b) for b in boxes]
+        new_data = [SpanSlider.collect_data_from_box(b) for b in boxes]
         root.update_from_data(new_data)
 
+    def collect_data_from_box(b):
+        return OD({
+            'able': b.ids.active_or_not.active,
+            'kind': b.kind,
+            'start': int(b.ids.start.value),
+            'end': int(b.ids.end.value),
+            'length': int(b.ids.end.max),
+            'id': 'hach'
+        })
+
 class RootWidget(ScreenManager):
-
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         global samples_path
         global corpus_path
-        self.last_data = [{}]
-
-        self.client = Client(app=self)
+        self.me_as_client = AnnotationClient()
         self.sampler = Sampler(samples_path) # expands the sample stack
         self.difference_pages = self.sampler.next_page()
         self.upmarker = UpMarker()
@@ -114,12 +101,11 @@ class RootWidget(ScreenManager):
     def sampler_add(self):
         text = self.ids.sampl.ids.html_sample.selection_text.replace('\n', ' ').replace('  ', ' ')
         if not text:
-            print ('Text must be selected... ')
+            logging.error('Text must be selected')
             return None
-
-        self.client.commander('save_sample', text=text)
+        logging.info("Adding sample to library")
+        self.me_as_client.commander(Command=SaveSample, text=text)
         self.sampler.add_to_library(text)
-        logging.info("adding sample to library")
         self.current = "Sample_Screen"
 
     def sampler_proceed(self):
@@ -135,14 +121,13 @@ class RootWidget(ScreenManager):
         self.current = "Annotation_Screen"
 
     def ok(self):
-        self.client.commander('save_annotation',annotation=self.final_version)
+        self.me_as_client.commander(Command=SaveAnnotation, annotation=self.final_version)
         ok = self.corpus.write_sample(self.final_version)
-        if ok==None:
-            print ('There was a problem with the annotation. Tagged was:\n\n %s' % (self.final_version))
+        if ok == None:
+            logging.error ('There was a problem with the annotation. Tagged was:\n\n %s' % (self.final_version))
             self.current = "Manipulation_Screen"
         logging.info("Adding to corpus")
         self.take_next()
-        sleep(0.2)
         self.current = "Annotation_Screen"
 
     def complicated_sample(self):
@@ -155,7 +140,7 @@ class RootWidget(ScreenManager):
         self.current = "Sample_Screen"
 
     def complicated(self, text):
-        self.client.commander('save_a_complicated_sample', text=text)
+        self.me_as_client.commander(Command=SaveComplicated, text=text)
         with open("./complicated.txt", 'a+') as f:
             f.writelines([text])
 
@@ -180,6 +165,9 @@ class RootWidget(ScreenManager):
         markedup_sentence = self.upmarker.markup(self.annotated_sample)
         self.ids.annot.ids.sample.text = markedup_sentence
         self.ids.manip.ids.sample.text = markedup_sentence
+        self.ids.manip.ids.annotationmanipulationview.refresh_from_data()
+        logging.warning(self.ids.manip.ids.annotationmanipulationview.data)
+
 
     def update_sliders_from_spans(self):
         paired_spans = list(Corpus.compute_structured_spans(self.final_version))
@@ -213,7 +201,7 @@ class RootWidget(ScreenManager):
         return sorted(data, key=lambda x: x['start'])
 
     def update_from_data(self, data):
-        print(data)
+        logging.info(data)
         data = self.sort_data(data)
         self.ids.manip.ids.spansliderview.data = data
         self.ids.manip.ids.spansliderview.refresh_from_data()
@@ -225,30 +213,64 @@ class RootWidget(ScreenManager):
         self.check_annotation(new_annotation)
         self.display_sample()
 
+    def more_annotation_of(self, kind):
+        length = len(self.final_version)
+        self.ids.manip.ids.spansliderview.data.append(
+            OD({
+                'kind': kind,
+                'id': kind,
+                'start': length - 2,
+                'end': length - 1,
+                'able': True,
+                'length': length,
+            }))
+
+    def less_annotation_of(self, kind):
+        try:
+            for annotation in self.ids.manip.ids.spansliderview.data[::-1]:
+                if annotation['kind'] == kind:
+                    data_was = self.ids.manip.ids.spansliderview.data
+                    data_was.remove(annotation)
+                    self.ids.manip.ids.spansliderview.data = data_was
+                    self.ids.manip.ids.spansliderview.refresh_from_data()
+                    break
+        except ValueError:
+            logging.warning('no %s annotation was in used annotations' % kind)
+
     def check_annotation(self, annotation):
         span_delims = [t[1][0] for t in annotation]
-        print(span_delims)
+        logging.info(span_delims)
         count = Counter(span_delims)
         if not count['B'] == 2:
-            print('Annotation contains wrong number of spanning tags!!! %s' % str(count))
+            logging.error('Annotation contains not at least the minimum number of annotations!!! %s' % str(count))
 
     def take_next(self):
         if self.textstore == None:
             self.textstore = TextStore(samples_path)
-        self.client.commander('deliver_sample')
+        self.me_as_client.commander(ProceedLocation=self.got_sample, Command=DeliverSample)
 
     def got_sample(self, text=''):
         self.sentence = text
+        print(text)
         if self.sentence == None:
-            print('Thank you for working!')
+            logging.info('Thank you for working!')
             App.get_running_app().stop()
             return None
-        self.client.commander ('make_prediction', text=self.sentence)
 
-    def take_next_rest(self, annotation):
+        self.me_as_client.commander(ProceedLocation=self.take_next_rest, Command=MakePrediction, text=text)
+
+    def take_next_rest(self, annotation=''):
+        print (annotation)
         self.annotated_sample = annotation
         self.doc = nlp(self.sentence)
         self.final_version = self.annotated_sample
+
+        print (annotation)
+        print (annotation)
+        print (annotation)
+        print (annotation)
+        print (annotation)
+
         self.update_sliders_from_spans()
         self.display_sample()
 

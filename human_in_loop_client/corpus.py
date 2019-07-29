@@ -272,22 +272,40 @@ class Corpus:
             ]
             for r_start, r_end in rs
         ]
+
         return paired_spans
 
+    importance_list = ['SUBJECT','ASPECT','CONTRAST',
+                            'EXCEPT_SUBJECT', 'CONTRAST_MARKER','COMPARISON_MARKER', '']
+
+
     def annotation_from_spans(self, tokens: List[str], paired_spans: List[List[Dict[str, Any]]]):
-        tags = ['O'] * len(tokens)
         sorted_paired_spans = sorted(paired_spans,
                                      key=lambda l:
                                      min(l, key=lambda x: x['start'])['start'])
 
+        all_tags = [[]] * len(tokens)
         # read list of spans backwards to overwrie the contrast with the subject tags
         for spans in sorted_paired_spans:
+
             beginning = min(spans, key=lambda x: x['start'])['start']
             for d in spans[::-1]:
+                these_tags = ['O'] * len(tokens)
+
                 if d['able']:
-                    assert (d['end'] < len(tokens))
+                    if not (d['end'] < len(tokens)):
+                        import pprint
+                        logging.error('Exceeding annotation length')
+                        length = len(tokens)
+                        logging.error('length %d' % length)
+                        logging.error(pprint.pformat(paired_spans))
                     for i in range(d['start'], d['end']):
-                        tags[i] = "-".join(['B' if i == beginning else 'I', d['kind']])
+                        these_tags[i] = "-".join(['B' if i == beginning else 'I', d['kind']])
+                all_tags = [x + [y] for x, y in zip(all_tags, these_tags)]
+
+        print ('ALL TAGS', all_tags)
+        tags = [max(row_tags, key=lambda x: -self.importance_list.index(x[2:]))
+                for row_tags in all_tags]
 
         annotation = list(zip(tokens, tags))
         return annotation
