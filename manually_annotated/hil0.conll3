@@ -199,7 +199,7 @@ process  NN  O  O
 is  VBZ  O  O
 that  IN  O  O
 in  IN  B-IN  B-CONTRAST
-carbon  NN  B-NN  B-SUBJECT
+carbon  NN  I-NN  I-SUBJECT
 reduction  NN  I-NN  I-SUBJECT
 we  PRP  I-PRP  I-CONTRAST
 can  MD  I-MD  I-CONTRAST
@@ -261,7 +261,7 @@ own  JJ  I-JJ  I-CONTRAST
 devices  NNS  I-NNS  I-CONTRAST
 .  PCT  O  O
 A  DT  B-DT  B-CONTRAST
-dessert  NN  B-NN  B-SUBJECT
+dessert  NN  I-NN  I-SUBJECT
 is  VBZ  I-VBZ  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
 very  RB  I-RB  I-CONTRAST
@@ -411,7 +411,7 @@ sacrificed  VBN  I-VBN  I-CONTRAST
 
 
 An  DT  B-DT  B-CONTRAST
-opportunity  NN  B-NN  B-SUBJECT
+opportunity  NN  I-NN  I-SUBJECT
 cost  NN  I-NN  I-SUBJECT
 refers  NNS  I-NNS  I-CONTRAST
 to  IN  I-IN  I-CONTRAST
@@ -578,7 +578,7 @@ increases  NNS  I-NNS  I-CONTRAST
 
 
 Conduction  NN  B-NN  B-SUBJECT
-happens  VBZ  B-VBZ  B-CONTRAST
+happens  VBZ  I-VBZ  I-CONTRAST
 because  IN  I-IN  I-CONTRAST
 of  IN  I-IN  I-CONTRAST
 hear  JJ  I-JJ  I-CONTRAST
@@ -770,7 +770,7 @@ more  JJR  I-JJR  I-CONTRAST
 features  NNS  I-NNS  I-CONTRAST
 than  IN  O  O
 what  WP  B-WP  B-CONTRAST
-AWT  NN  B-NN  B-SUBJECT
+AWT  NN  I-NN  I-SUBJECT
 does  VBZ  I-VBZ  I-CONTRAST
 .  PCT  O  O
 

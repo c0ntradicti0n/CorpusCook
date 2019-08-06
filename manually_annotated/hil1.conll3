@@ -157,7 +157,7 @@ users  NNS  I-NNS  I-CONTRAST
 ,  PCT  O  O
 while  IN  O  O
 the  DT  B-DT  B-CONTRAST
-Kaspersky  NNP  B-NNP  B-SUBJECT
+Kaspersky  NNP  I-NNP  I-SUBJECT
 ’s  NN  I-NN  I-CONTRAST
 entry-level  JJ  I-JJ  I-CONTRAST
 product  NN  I-NN  I-CONTRAST
@@ -229,7 +229,7 @@ time  NN  I-NN  I-CONTRAST
 compared  VBN  O  O
 to  IN  O  O
 Kaspersky  NNP  B-NNP  B-SUBJECT
-,  PCT  B-PCT  B-CONTRAST
+,  PCT  I-PCT  I-CONTRAST
 which  WDT  I-WDT  I-CONTRAST
 almost  RB  I-RB  I-CONTRAST
 takes  VBZ  I-VBZ  I-CONTRAST
@@ -246,7 +246,7 @@ Norton  NNP  I-NNP  I-CONTRAST
 .  PCT  O  O
 
 Norton  NNP  B-NNP  B-SUBJECT
-is  VBZ  B-VBZ  B-CONTRAST
+is  VBZ  I-VBZ  I-CONTRAST
 best  RBS  I-RBS  I-CONTRAST
 suited  VBN  I-VBN  I-CONTRAST
 for  IN  I-IN  I-CONTRAST
@@ -319,7 +319,7 @@ system  NN  O  O
 performance  NN  O  O
 ,  PCT  O  O
 Kaspersky  NNP  B-NNP  B-SUBJECT
-is  VBZ  B-VBZ  B-CONTRAST
+is  VBZ  I-VBZ  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
 little  JJ  I-JJ  I-CONTRAST
 ahead  RB  I-RB  I-CONTRAST
@@ -331,7 +331,7 @@ this  DT  I-DT  I-CONTRAST
 regard  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 Norton  RB  B-RB  B-SUBJECT
-,  PCT  B-PCT  B-CONTRAST
+,  PCT  I-PCT  I-CONTRAST
 on  IN  I-IN  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
 other  JJ  I-JJ  I-CONTRAST
@@ -429,7 +429,7 @@ script  NN  O  O
 while  IN  O  O
 using  VBG  O  O
 JavaScript  NNP  B-NNP  B-SUBJECT
-which  WDT  B-WDT  B-CONTRAST
+which  WDT  I-WDT  I-CONTRAST
 eventually  RB  I-RB  I-CONTRAST
 would  MD  I-MD  I-CONTRAST
 take  VB  I-VB  I-CONTRAST
@@ -498,7 +498,7 @@ activities  NNS  I-NNS  I-CONTRAST
 .  PCT  O  O
 
 A  DT  B-DT  B-CONTRAST
-constraint  NN  B-NN  B-SUBJECT
+constraint  NN  I-NN  I-SUBJECT
 more  RBR  I-RBR  I-CONTRAST
 often  RB  I-RB  I-CONTRAST
 refers  VBZ  I-VBZ  I-CONTRAST
@@ -520,7 +520,7 @@ a  DT  I-DT  I-CONTRAST
 problem  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 A  DT  B-DT  B-CONTRAST
-restraint  NN  B-NN  B-SUBJECT
+restraint  NN  I-NN  I-SUBJECT
 ,  PCT  I-PCT  I-CONTRAST
 on  IN  I-IN  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
@@ -555,7 +555,7 @@ individual  NN  I-NN  I-CONTRAST
 
 While  IN  O  O
 a  DT  B-DT  B-CONTRAST
-constraint  NN  B-NN  B-SUBJECT
+constraint  NN  I-NN  I-SUBJECT
 is  VBZ  I-VBZ  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
 restriction  NN  I-NN  I-CONTRAST
@@ -567,7 +567,7 @@ or  CC  I-CC  I-CONTRAST
 something  NN  I-NN  I-CONTRAST
 ,  PCT  O  O
 a  DT  B-DT  B-CONTRAST
-restraint  NN  B-NN  B-SUBJECT
+restraint  NN  I-NN  I-SUBJECT
 is  VBZ  I-VBZ  I-CONTRAST
 an  DT  I-DT  I-CONTRAST
 act  NN  I-NN  I-CONTRAST
@@ -624,7 +624,7 @@ activities  NNS  I-NNS  I-CONTRAST
 .  PCT  O  O
 
 A  DT  B-DT  B-CONTRAST
-constraint  NN  B-NN  B-SUBJECT
+constraint  NN  I-NN  I-SUBJECT
 more  RBR  I-RBR  I-CONTRAST
 often  RB  I-RB  I-CONTRAST
 refers  VBZ  I-VBZ  I-CONTRAST
@@ -646,7 +646,7 @@ a  DT  I-DT  I-CONTRAST
 problem  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 A  DT  B-DT  B-CONTRAST
-restraint  NN  B-NN  B-SUBJECT
+restraint  NN  I-NN  I-SUBJECT
 ,  PCT  I-PCT  I-CONTRAST
 on  IN  I-IN  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
@@ -681,7 +681,7 @@ individual  NN  I-NN  I-CONTRAST
 
 While  IN  O  O
 a  DT  B-DT  B-CONTRAST
-constraint  NN  B-NN  B-SUBJECT
+constraint  NN  I-NN  I-SUBJECT
 is  VBZ  I-VBZ  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
 restriction  NN  I-NN  I-CONTRAST
@@ -693,7 +693,7 @@ or  CC  I-CC  I-CONTRAST
 something  NN  I-NN  I-CONTRAST
 ,  PCT  O  O
 a  DT  B-DT  B-CONTRAST
-restraint  NN  B-NN  B-SUBJECT
+restraint  NN  I-NN  I-SUBJECT
 is  VBZ  I-VBZ  I-CONTRAST
 an  DT  I-DT  I-CONTRAST
 act  NN  I-NN  I-CONTRAST

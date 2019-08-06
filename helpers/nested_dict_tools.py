@@ -1,7 +1,7 @@
 from collections import abc
 import numpy as np
 
-from tok import Tok
+from grammer_text_fit.tok import Tok
 
 
 def nested_dict_iter(nested):
