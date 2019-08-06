@@ -1,7 +1,7 @@
 -DOCSTART- -X- -X- O
 
 Weasels  NNS  B-NNS  B-SUBJECT
-are  VBP  B-VBP  B-CONTRAST
+are  VBP  I-VBP  I-CONTRAST
 solidary  JJ  I-JJ  I-CONTRAST
 creatures  NNS  I-NNS  I-CONTRAST
 because  IN  I-IN  I-CONTRAST
@@ -80,7 +80,7 @@ kill  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 
 Ferrets  NNS  B-NNS  B-SUBJECT
-can  MD  B-MD  B-CONTRAST
+can  MD  I-MD  I-CONTRAST
 grow  VB  I-VB  I-CONTRAST
 up  RP  I-RP  I-CONTRAST
 to  IN  I-IN  I-CONTRAST
@@ -101,7 +101,7 @@ of  IN  I-IN  I-CONTRAST
 inches  NNS  I-NNS  I-CONTRAST
 .  PCT  O  O
 The  DT  B-DT  B-CONTRAST
-weasels  NNS  B-NNS  B-SUBJECT
+weasels  NNS  I-NNS  I-SUBJECT
 can  MD  I-MD  I-CONTRAST
 grow  VB  I-VB  I-CONTRAST
 up  RP  I-RP  I-CONTRAST
@@ -608,7 +608,7 @@ the  DT  O  O
 mean  NN  O  O
 .  PCT  O  O
 The  DT  B-DT  B-CONTRAST
-variance  NN  B-NN  B-SUBJECT
+variance  NN  I-NN  I-SUBJECT
 is  VBZ  I-VBZ  I-CONTRAST
 symbolized  VBN  I-VBN  I-CONTRAST
 by  IN  I-IN  I-CONTRAST
@@ -617,7 +617,7 @@ S  NN  I-NN  I-CONTRAST
 2  CD  I-CD  I-CONTRAST
 ”  UKN  I-UKN  I-CONTRASTand  CC  O  O
 the  DT  B-DT  B-CONTRAST
-standard  JJ  B-JJ  B-SUBJECT
+standard  JJ  I-JJ  I-SUBJECT
 deviation  NN  I-NN  I-SUBJECT
 –  IN  I-IN  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
@@ -634,7 +634,7 @@ S  NN  I-NN  I-CONTRAST
 ”  UKN  I-UKN  I-CONTRAST.  PCT  O  O
 
 The  DT  B-DT  B-CONTRAST
-variance  NN  B-NN  B-SUBJECT
+variance  NN  I-NN  I-SUBJECT
 combines  VBZ  I-VBZ  I-CONTRAST
 all  PDT  I-PDT  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
@@ -805,7 +805,7 @@ to  TO  I-TO  I-CONTRAST
 home  NN  I-NN  I-CONTRAST
 and  CC  O  O
 the  DT  B-DT  B-CONTRAST
-Google  NNP  B-NNP  B-SUBJECT
+Google  NNP  I-NNP  I-SUBJECT
 ’s  NN  I-NN  I-CONTRAST
 global  JJ  I-JJ  I-CONTRAST
 recognition  NN  I-NN  I-CONTRAST
@@ -844,7 +844,7 @@ failing  NN  O  O
 .  PCT  O  O
 
 The  DT  B-DT  B-CONTRAST
-first  JJ  B-JJ  B-SUBJECT
+first  JJ  I-JJ  I-SUBJECT
 generation  NN  I-NN  I-SUBJECT
 Eero  NNP  I-NNP  I-SUBJECT
 was  VBD  I-VBD  I-CONTRAST
@@ -872,7 +872,7 @@ white  JJ  I-JJ  I-CONTRAST
 finish  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 The  DT  B-DT  B-CONTRAST
-second  JJ  B-JJ  B-SUBJECT
+second  JJ  I-JJ  I-SUBJECT
 generation  NN  I-NN  I-SUBJECT
 Eero  NNP  I-NNP  I-SUBJECT
 looks  VBZ  I-VBZ  I-CONTRAST
@@ -891,7 +891,7 @@ design  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 
 The  DT  B-DT  B-CONTRAST
-first  JJ  B-JJ  B-SUBJECT
+first  JJ  I-JJ  I-SUBJECT
 generation  NN  I-NN  I-SUBJECT
 Eero  NNP  I-NNP  I-SUBJECT
 was  VBD  I-VBD  I-CONTRAST
@@ -919,7 +919,7 @@ white  JJ  I-JJ  I-CONTRAST
 finish  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 The  DT  B-DT  B-CONTRAST
-second  JJ  B-JJ  B-SUBJECT
+second  JJ  I-JJ  I-SUBJECT
 generation  NN  I-NN  I-SUBJECT
 Eero  NNP  I-NNP  I-SUBJECT
 looks  VBZ  I-VBZ  I-CONTRAST
@@ -1146,7 +1146,7 @@ beacons  NNS  I-NNS  I-CONTRAST
 .  PCT  O  O
 
 The  DT  B-DT  B-CONTRAST
-play  NN  B-NN  B-SUBJECT
+play  NN  I-NN  I-SUBJECT
 tells  VBZ  I-VBZ  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
 story  NN  I-NN  I-CONTRAST
@@ -1158,7 +1158,7 @@ the  DT  I-DT  I-CONTRAST
 actors  NNS  I-NNS  I-CONTRAST
 while  IN  O  O
 the  DT  B-DT  B-CONTRAST
-musical  JJ  B-JJ  B-SUBJECT
+musical  JJ  I-JJ  I-SUBJECT
 tells  VBZ  I-VBZ  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
 story  NN  I-NN  I-CONTRAST
@@ -1197,7 +1197,7 @@ a  DT  I-DT  I-CONTRAST
 musical  JJ  I-JJ  I-CONTRAST
 .  PCT  O  O
 A  NN  B-NN  B-CONTRAST
-play  NN  B-NN  B-SUBJECT
+play  NN  I-NN  I-SUBJECT
 will  MD  I-MD  I-CONTRAST
 tell  VB  I-VB  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
@@ -1221,7 +1221,7 @@ evident  JJ  I-JJ  I-CONTRAST
 .  PCT  O  O
 
 A  DT  B-DT  B-CONTRAST
-play  NN  B-NN  B-SUBJECT
+play  NN  I-NN  I-SUBJECT
 brings  VBZ  I-VBZ  I-CONTRAST
 out  RP  I-RP  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
@@ -1274,7 +1274,7 @@ designer  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 
 The  DT  B-DT  B-CONTRAST
-keyword  JJ  B-JJ  B-SUBJECT
+keyword  JJ  I-JJ  I-SUBJECT
 ‘  NN  I-NN  I-SUBJECT
 struct  NN  I-NN  I-SUBJECT
 ’  NN  I-NN  I-SUBJECT
@@ -1320,7 +1320,7 @@ share  VB  I-VB  I-CONTRAST
 memory  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 A  DT  B-DT  B-CONTRAST
-union  NN  B-NN  B-SUBJECT
+union  NN  I-NN  I-SUBJECT
 ,  PCT  I-PCT  I-CONTRAST
 on  IN  I-IN  I-CONTRAST
 the  DT  I-DT  I-CONTRAST
@@ -1345,7 +1345,7 @@ allocated  VBN  I-VBN  I-CONTRAST
 .  PCT  O  O
 
 A  DT  B-DT  B-CONTRAST
-union  NN  B-NN  B-SUBJECT
+union  NN  I-NN  I-SUBJECT
 stores  VBZ  I-VBZ  I-CONTRAST
 a  DT  I-DT  I-CONTRAST
 single  JJ  I-JJ  I-CONTRAST
@@ -1460,7 +1460,7 @@ type  NN  I-NN  I-CONTRAST
 .  PCT  O  O
 
 A  DT  B-DT  B-CONTRAST
-structure  NN  B-NN  B-SUBJECT
+structure  NN  I-NN  I-SUBJECT
 can  MD  I-MD  I-CONTRAST
 store  VB  I-VB  I-CONTRAST
 different  JJ  I-JJ  I-CONTRAST
@@ -1491,7 +1491,7 @@ members  NNS  I-NNS  I-CONTRAST
 .  PCT  O  O
 While  IN  O  O
 a  DT  B-DT  B-CONTRAST
-union  NN  B-NN  B-SUBJECT
+union  NN  I-NN  I-SUBJECT
 stores  NNS  I-NNS  I-CONTRAST
 same  JJ  I-JJ  I-CONTRAST
 value  NN  I-NN  I-CONTRAST

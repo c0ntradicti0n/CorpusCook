@@ -41,12 +41,12 @@ class difference_between_crawler(CrawlSpider):
                 f.write(response.body)
                 logging.info('path: %s' % (filepath))
 
-            soup =  BeautifulSoup(response.body, features="lxml")
+            #soup =  BeautifulSoup(response.body, features="lxml")
 
-            tabular_image_urls = soup.find_all('img', src=re.compile(".+cdn.+\.jpg$"))
-            for url in tabular_image_urls:
-                url = url["src"]
-                self.download_image(url)
+            #tabular_image_urls = soup.find_all('img', src=re.compile(".+cdn.+\.jpg$"))
+            #for url in tabular_image_urls:
+            #    url = url["src"]
+            #    self.download_image(url)
 
     def download_image(self, tabular_image_url):
         if tabular_image_url:
