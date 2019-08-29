@@ -1,6 +1,7 @@
 from human_in_loop_SandC.human_in_loop_client.annotation_protocol import *
 
 from human_in_loop_SandC.human_in_loop_server.model import Model
+from human_in_loop_SandC.human_in_loop_server.proposaler import Proposaler
 from human_in_loop_SandC.human_in_loop_server.sampler import Sampler
 from human_in_loop_SandC.human_in_loop_client.corpus import Corpus
 from human_in_loop_SandC.human_in_loop_server.webpageparser import WebPageParser
@@ -15,6 +16,7 @@ corpus = Corpus(path='server_annotations.conll3')
 sampler = Sampler(sample_file='server_samples_bin.txt')
 difference_pages = WebPageParser(path_to_htmls='../scraping/data')
 model = Model(model_path="human_in_loop_server/ai_models/models/model.tar.gz")
+proposaler = Proposaler(model)
 
 
 import pprint
@@ -39,9 +41,15 @@ class AnnotationCloud(amp.AMP):
         self.log_before_after('DeliverSample', None, text)
         return {'text': text}
 
+    @MakeProposals.responder
+    def makeproposals(self, text):
+        proposals = proposaler.make_proposals(text)
+        self.log_before_after('MakeProposals', text, proposals)
+        return {'proposals': proposals}
+
     @SaveAnnotation.responder
     def saveannotation(self, annotation):
-        corpus.write_sample(annotation)
+        corpus.write_annotation(annotation)
         self.log_before_after('SaveAnnotation', annotation, None)
         return {'done': 'yes'}
 
@@ -55,6 +63,12 @@ class AnnotationCloud(amp.AMP):
     def savesample(self, text):
         sampler.add_to_library(text)
         self.log_before_after('SaveSample', text, None)
+        return {'done': 'yes'}
+
+    @ZeroAnnotation.responder
+    def zeroannotation(self, text):
+        corpus.save_zero_annotation(text)
+        self.log_before_after('ZeroAnnotation', text, None)
         return {'done': 'yes'}
 
     @DeliverPage.responder

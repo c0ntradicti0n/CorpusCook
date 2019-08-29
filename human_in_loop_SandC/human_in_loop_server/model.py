@@ -1,4 +1,6 @@
+import builtins
 import itertools
+import logging
 import operator
 
 from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
@@ -19,7 +21,12 @@ class Model:
         self.model = Predictor.from_path(model_path)
 
     def predict(self, sentence):
-        results = self.model.predict_json({"sentence": sentence})
+        try:
+            results = self.model.predict_json({"sentence": sentence})
+        except builtins.KeyError:
+            logging.error('"%s" could not be annotated' % sentence)
+            return []
         tags = list(Corpus.bioul_to_bio(results["tags"]))
         return list(zip(results["words"], tags))
+
 
