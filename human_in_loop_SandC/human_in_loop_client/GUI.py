@@ -122,7 +122,7 @@ class RootWidget(ScreenManager):
 
     def ok(self):
         self.me_as_client.commander(Command=SaveAnnotation, annotation=self.final_version)
-        ok = self.corpus.write_sample(self.final_version)
+        ok = self.corpus.write_annotation(self.final_version)
         if ok == None:
             logging.error ('There was a problem with the annotation. Tagged was:\n\n %s' % (self.final_version))
             self.current = "Manipulation_Screen"

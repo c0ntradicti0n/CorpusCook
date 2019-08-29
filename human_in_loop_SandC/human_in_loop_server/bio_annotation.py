@@ -1,17 +1,14 @@
+import pprint
+
+import regex as re
 import itertools
+import more_itertools
 from collections import Counter
 from typing import Dict, List, Any
+from xnym_embeddings.nested_list_tools import flatten
 from helpers.color_logger import *
 
-import more_itertools
-import spacy
-import regex as re
-from nltk import flatten
-
-nlp = spacy.load("en_core_sci_sm")
-
 conll_line = re.compile(r"([^\s]+)  ([^\s]+)  ([^\s]+)  ([^\s]+)")
-
 only_abc = re.compile('[^a-zA-Z0-9]|_')
 
 
@@ -33,47 +30,8 @@ def ranges(nums):
     return [(s, e + 1) for s, e in zip(edges, edges)]
 
 
-class Corpus:
-    def __init__(self, path):
-        self.path = path
-        with open(self.path, 'w+') as f:
-            f.write("-DOCSTART- -X- -X- O\n\n")
-
-    def write_annotation(self, annotation, **kwargs):
-        """
-
-        >>> annotated_sample = [('I','B-SUBJECT'),   ('am', 'I-CONTRAST'),  ('soft', 'I-CONTRAST'), ('.', 'O'),  \
-                                ('You','B-SUBJECT'), ('are', 'I-CONTRAST'), ('hard', 'I-CONTRAST'), ('.', 'O')   \
-         ]
-        >>> c = Corpus ('./tests/test_corpus_out.conll')
-        >>> c.write_annotation(annotated_sample)
-
-        :param a_s:
-        :return:
-        """
-        sentence = " ".join([word[0] for word in annotation])
-        doc = nlp(sentence)
-        poss = [re_replace_abc(re_replace_dot(tok.tag_)) for tok in doc]
-        with open(self.path, "a+") as f:
-            combos = list(zip(annotation, poss))
-
-            conll_lines = self.token_pos_tag_to_conll3(combos, **kwargs)
-            if conll_lines == None:
-                return None
-
-            f.write("\n".join(conll_lines))
-            f.write('\n\n')
-
-    def save_zero_annotation(self, text):
-        doc = nlp(text)
-        tokens = [t.text for t in doc]
-        o_s = ['O']*len(tokens)
-        annotation = list(zip(tokens, o_s))
-        self.write_annotation(annotation, check=False)
-
-
-
-    def token_pos_tag_to_conll3(self, combos, check=True):
+class BIO_Annotation:
+    def token_pos_tag_to_conll3(combos):
         conll_lines = []
         span_delims = []
 
@@ -95,15 +53,31 @@ class Corpus:
                 raise AssertionError
             conll_lines.append(line)
 
-        if check:
-            assert (all(sd in ['B', 'I', 'O'] for sd in span_delims))
-            count = Counter(span_delims)
-            if not count['B'] == 2:
-                logging.error('Annotation contains wrong number of spanning tags!!! %s' % str(count))
-                return None
-            assert count['B'] == 2
+        assert (all(sd in ['B', 'I', 'O'] for sd in span_delims))
+        count = Counter(span_delims)
+        if not count['B'] == 2:
+            logging.error('Annotation contains wrong number of spanning tags!!! %s' % str(count))
+            return None
+        assert count['B'] == 2
 
         return conll_lines
+
+    def validity_check(annotation):
+        spans = BIO_Annotation.compute_structured_spans(annotation)
+        if len(spans) <= 2:
+            logging.info('not enough sides')
+            return False
+        for side in spans:
+            if len(side)<=2:
+                logging.info('not enough things in span %s' % pprint.pformat(spans, indent=4))
+                return False
+            kinds = [ann[0] for ann in side]
+            kind_counts = Counter(kinds)
+            if not all (k==1 for _, k in kind_counts.items()):
+                logging.info('wrong number of things in span')
+                return False
+        logging.info('well done!')
+        return True
 
     def bioul_to_bio(bioul_tags):
         """ Make BIOUL coding scheme to BIO
@@ -167,7 +141,7 @@ class Corpus:
 
             yield "".join([span_tag, _, annotag])
 
-    def compute_spans(annotations):
+    def annotation_to_spans(annotations):
         ''' Get spans bases on spans annotated with the BIOL tagging scheme
 
         >>> annotation = [  # Some strange prediction from the model
@@ -185,7 +159,7 @@ class Corpus:
         ...    ]
         >>> annotation = [('The', 'B-CONTRAST'), ('queen', 'I-SUBJECT'), ('’s', 'I-SUBJECT'), ('crown', 'I-SUBJECT'), (',', 'I-CONTRAST'), ('also', 'I-CONTRAST'), ('referred', 'I-CONTRAST'), ('to', 'I-CONTRAST'), ('the', 'I-CONTRAST'), ('Royal', 'I-CONTRAST'), ('crown', 'I-CONTRAST'), ('is', 'I-CONTRAST'), ('made', 'I-CONTRAST'), ('with', 'I-CONTRAST'), ('depressed', 'I-CONTRAST'), ('arches', 'I-CONTRAST'), ('.', 'O'), ('The', 'B-CONTRAST'), ('king', 'I-SUBJECT'), ('’s', 'I-SUBJECT'), ('crown', 'I-SUBJECT'), ('also', 'I-CONTRAST'), ('called', 'I-CONTRAST'), ('the', 'I-CONTRAST'), ('Imperial', 'I-CONTRAST'), ('crown', 'I-CONTRAST'), (',', 'I-CONTRAST'), ('on', 'I-CONTRAST'), ('the', 'I-CONTRAST'), ('other', 'I-CONTRAST'), ('hand', 'I-CONTRAST'), (',', 'I-CONTRAST'), ('has', 'I-CONTRAST'), ('arches', 'I-CONTRAST'), ('that', 'I-CONTRAST'), ('rise', 'I-CONTRAST'), ('to', 'I-CONTRAST'), ('the', 'I-CONTRAST'), ('centre', 'I-CONTRAST'), ('.', 'O')]
         >>> import pprint
-        >>> pprint.pprint(list(Corpus.compute_spans(annotation))) # doctest: +NORMALIZE_WHITESPACE
+        >>> pprint.pprint(list(BIO_Annotation.annotation_to_spans(annotation))) # doctest: +NORMALIZE_WHITESPACE
                 [('CONTRAST',
                   (27, 33),
                   [(27, ('facilitation', 'B-CONTRAST')),
@@ -214,27 +188,34 @@ class Corpus:
                    (48, ('neuropeptides', 'I-CONTRAST')),
                    (49, ('”', 'L-CONTRAST'))])]
         >>> annotation = [["The", "B-CONTRAST"], ["key", "I-CONTRAST"], ["difference", "I-CONTRAST"], ["between", "I-CONTRAST"], ["distillation", "I-CONTRAST"], ["and", "I-CONTRAST"], ["condensation", "I-CONTRAST"], ["is", "O"], ["that", "O"], ["the", "B-CONTRAST"], ["distillation", "I-SUBJECT"], ["is", "I-CONTRAST"], ["a", "I-CONTRAST"], ["separation", "I-CONTRAST"], ["technique", "I-CONTRAST"], ["whereas", "O"], ["the", "B-CONTRAST"], ["condensation", "I-SUBJECT"], ["is", "I-CONTRAST"], ["a", "I-CONTRAST"], ["process", "I-CONTRAST"], ["of", "I-CONTRAST"], ["changing", "I-CONTRAST"], ["the", "I-CONTRAST"], ["phase", "I-CONTRAST"], ["of", "I-CONTRAST"], ["matter", "I-CONTRAST"], [".", "O"]]
-        >>> pprint.pprint(list(Corpus.compute_spans(annotation))) # doctest: +NORMALIZE_WHITESPACE
+        >>> pprint.pprint(list(BIO_Annotation.annotation_to_spans(annotation))) # doctest: +NORMALIZE_WHITESPACE
 
         :param annotations: list of words and tags
         :return:
         '''
 
         # Divide by 'B'eginning tags
-        parts = list(Corpus.compute_parts(annotations))
+        parts = list(BIO_Annotation.compute_parts(annotations))
 
         # Get the spans from the parts: parts mean, that if the 'B' tag appeared, all tokens, that come until the next 'B'
         # can are of the same kind
 
-        # spans = self.spans_from_partitions_flat(parts)
+        yield from BIO_Annotation.spans_from_partitions_flat(parts)
 
-        yield from Corpus.spans_from_partitions_flat(parts)
+    def text_from_span(span):
+        return " ".join([t[1][0] for t in span[2]])
+
+    def is_nl_text(text):
+        return re.sub(r"""[\s\d.!?\\\-;:'"\[\]{}()=+_@#$%\^&*`~\/<>|]""", '', text)
+
 
     def compute_structured_spans(annotations):
         # Divide by 'B'eginning tags
-        parts = list(Corpus.compute_parts(annotations))
+        parts = list(BIO_Annotation.compute_parts(annotations))
         # get single spans within these parts
-        return list(Corpus.spans_from_partitions_nested(parts))
+        nested = list(BIO_Annotation.spans_from_partitions_nested(parts))
+        nested = [sp for side in nested for sp in side if BIO_Annotation.is_nl_text(BIO_Annotation.text_from_span(sp)) ]
+        return nested
 
     def compute_parts(annotations):
         return [part
@@ -243,12 +224,12 @@ class Corpus:
 
     def spans_from_partitions_flat(parts):
         for part in parts:
-            spans = Corpus.spans_from_part(part)
+            spans = BIO_Annotation.spans_from_part(part)
             yield from spans
 
     def spans_from_partitions_nested(parts):
         for part in parts:
-            spans = list(Corpus.spans_from_part(part))
+            spans = list(BIO_Annotation.spans_from_part(part))
             yield spans
 
     def kind_from_tag(tag):
@@ -258,10 +239,10 @@ class Corpus:
             raise IndexError
 
     def spans_from_part(part):
-        part = sorted(part, key=Corpus.kind_from_tag)
+        part = sorted(part, key=BIO_Annotation.kind_from_tag)
         partitions = {
             kind: list(tokens)
-            for kind, tokens in itertools.groupby(part, key=Corpus.kind_from_tag)
+            for kind, tokens in itertools.groupby(part, key=BIO_Annotation.kind_from_tag)
         }
         for kind, tokens in partitions.items():
             if kind not in ['O', '']:
@@ -269,7 +250,7 @@ class Corpus:
 
                 yield (kind, (min(positions), max(positions) + 1), tokens)
 
-    def pair_spans(self, spans: List[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
+    def pair_spans(spans: List[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
         indices = sorted(list(set(flatten([list(range(d['start'], d['end'])) for d in spans if d['able']]))))
         rs = ranges(indices)
         paired_spans = [
@@ -286,10 +267,10 @@ class Corpus:
         return paired_spans
 
     importance_list = ['SUBJECT','ASPECT','CONTRAST',
-                            'EXCEPT_SUBJECT', 'CONTRAST_MARKER','COMPARISON_MARKER', '']
+                            'SUBJECT_EXCEPT', 'CONTRAST_MARKER','COMPARISON_MARKER', '']
 
 
-    def annotation_from_spans(self, tokens: List[str], paired_spans: List[List[Dict[str, Any]]]):
+    def annotation_from_spans(tokens: List[str], paired_spans: List[List[Dict[str, Any]]]):
         sorted_paired_spans = sorted(paired_spans,
                                      key=lambda l:
                                      min(l, key=lambda x: x['start'])['start'])
@@ -314,7 +295,7 @@ class Corpus:
                 all_tags = [x + [y] for x, y in zip(all_tags, these_tags)]
 
         print ('ALL TAGS', all_tags)
-        tags = [max(row_tags, key=lambda x: -self.importance_list.index(x[2:]))
+        tags = [max(row_tags, key=lambda x: - BIO_Annotation.importance_list.index(x[2:]))
                 for row_tags in all_tags]
 
         annotation = list(zip(tokens, tags))
