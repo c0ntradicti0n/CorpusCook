@@ -43,7 +43,7 @@ class Proposaler:
             annotation = self.model.predict(test_sample)
         except ValueError:
             logging.error('models window too short.')
-            return self.get_sample_if_reasonable(self, sents_span[:len(sents_span-1)])
+            return self.get_sample_if_reasonable(self, sents_span[:len(sents_span)-1])
 
         tokens = [x[0] for x in annotation]
         if self.annotation_scheme.BIO_Annotation.validity_check(annotation):
