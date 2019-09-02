@@ -26,7 +26,9 @@ https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.2.0/en_core_sci_s
 bs4
 kivy
 regex
-Cythongit
+Cython
 more_itertools
 pandas
 gensim
+nltk
+pyLDAvis

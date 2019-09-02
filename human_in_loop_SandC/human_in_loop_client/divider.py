@@ -35,12 +35,12 @@ stop_words = stopwords.words('english')
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 # Import Dataset
-df = pd.read_json('https://raw.githubusercontent.com/selva86/datasets/master/newsgroups.json')
+df = pd.read_json('/home/stefan/PycharmProjects/CorpusCook/newsgroups.json')
 print(df.target_names.unique())
 df.head()
 
 # Convert to list
-data = df.content.values.tolist()
+data = df.content.values.tolist()[:100]
 
 # Remove Emails
 data = [re.sub('\S*@\S*\s?', '', sent) for sent in data]
@@ -99,7 +99,7 @@ data_words_bigrams = make_bigrams(data_words_nostops)
 
 # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
 # python3 -m spacy download en
-nlp = spacy.load('en', disable=['parser', 'ner'])
+nlp = spacy.load('en_core_web_md', disable=['parser', 'ner'])
 
 # Do lemmatization keeping only noun, adj, vb, adv
 data_lemmatized = lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
@@ -121,6 +121,17 @@ print(corpus[:1])
 id2word[0]
 'addition'
 
+# Build LDA model
+lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
+                                           id2word=id2word,
+                                           num_topics=20,
+                                           random_state=100,
+                                           update_every=1,
+                                           chunksize=100,
+                                           passes=10,
+                                           alpha='auto',
+                                           per_word_topics=True)
+
 # Print the Keyword in the 10 topics
 pprint(lda_model.print_topics())
 doc_lda = lda_model[corpus]
@@ -134,12 +145,16 @@ coherence_lda = coherence_model_lda.get_coherence()
 print('\nCoherence Score: ', coherence_lda)
 
 # Visualize the topics
-pyLDAvis.enable_notebook()
+#pyLDAvis.enable_notebook()
 vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
 vis
 
 # Download File: http://mallet.cs.umass.edu/dist/mallet-2.0.8.zip
-mallet_path = 'path/to/mallet-2.0.8/bin/mallet' # update this path
+mallet_path = r'/home/stefan/PycharmProjects/CorpusCook/mallet-2.0.8/bin/mallet' # update this path
+import os
+os.environ.update({'MALLET_HOME':mallet_path})
+
+
 ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=20, id2word=id2word)
 # Show Topics
 pprint(ldamallet.show_topics(formatted=False))
