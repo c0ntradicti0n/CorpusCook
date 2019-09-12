@@ -25,9 +25,9 @@ from helpers.color_logger import *
 class AnnotationCloud(amp.AMP):
     def log_before_after(self, what, before, after):
         logging.info(what)
-        logging.info(pprint.pformat(before))
+        logging.info(pprint.pformat(before)[:100]+" ...")
         logging.info('-->')
-        logging.info(pprint.pformat(after))
+        logging.info(pprint.pformat(after)[:100]+" ...")
 
     @MakePrediction.responder
     def makeprediction(self, text):
@@ -48,6 +48,12 @@ class AnnotationCloud(amp.AMP):
         proposals = proposaler.make_proposals(text)
         self.log_before_after('MakeProposals', text, proposals)
         return {'proposals': proposals}
+
+    @ChangeProposals.responder
+    def changeproposals(self, cuts, indices, delete_add):
+        proposals = proposaler.change_proposals(cuts, indices)
+        self.log_before_after('ChangeProposals', cuts, proposals)
+        return {'proposals': proposals, 'indices': indices, 'delete_add': delete_add}
 
     @SaveAnnotation.responder
     def saveannotation(self, annotation):
