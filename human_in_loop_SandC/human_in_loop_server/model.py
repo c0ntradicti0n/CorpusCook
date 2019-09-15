@@ -26,6 +26,8 @@ class Model:
         except builtins.KeyError:
             logging.error('"%s" could not be annotated' % sentence)
             return []
+        except IndexError:
+            return []
         tags = list(Corpus.bioul_to_bio(results["tags"]))
         return list(zip(results["words"], tags))
 

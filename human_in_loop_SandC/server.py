@@ -10,8 +10,6 @@ import xnym_embeddings.xnym_embeddings
 import attention_please_tagger.attention_please_tagger
 import spacy_embedder.spacy_embedder
 
-
-
 corpus = Corpus(path='server_annotations.conll3')
 sampler = Sampler(sample_file='server_samples_bin.txt')
 difference_pages = WebPageParser(path_to_htmls='../scraping/data')
@@ -83,13 +81,12 @@ class AnnotationCloud(amp.AMP):
     def deliverpage(self):
         while True:
             try:
-               return {'text':difference_pages.next_text()}
+                return {'text': difference_pages.next_text()}
             except StopIteration:
                 raise FileNotFoundError(
                     "No pages anymore")
             # TODO
             #  pages store empty: err callback to lead to generating more pages
-
 
 def main():
     from twisted.internet import reactor

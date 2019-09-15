@@ -4,12 +4,21 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.alexandria" />
       <excludeFolder url="file://$MODULE_DIR$/.buildozer" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/alexandria-app" />
+      <excludeFolder url="file://$MODULE_DIR$/bin" />
       <excludeFolder url="file://$MODULE_DIR$/cache" />
       <excludeFolder url="file://$MODULE_DIR$/differencebetween" />
+      <excludeFolder url="file://$MODULE_DIR$/glove.6B" />
+      <excludeFolder url="file://$MODULE_DIR$/grammer_text_fit" />
+      <excludeFolder url="file://$MODULE_DIR$/grammer_text_fit/.alexandria" />
+      <excludeFolder url="file://$MODULE_DIR$/human_in_loop_SandC/.buildozer" />
       <excludeFolder url="file://$MODULE_DIR$/image_tests" />
+      <excludeFolder url="file://$MODULE_DIR$/mallet-2.0.8" />
+      <excludeFolder url="file://$MODULE_DIR$/scraping" />
       <excludeFolder url="file://$MODULE_DIR$/scraping/data" />
       <excludeFolder url="file://$MODULE_DIR$/tests" />
+      <excludeFolder url="file://$MODULE_DIR$/text-segmentation" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/../Distinctiopus/data" />
     </content>

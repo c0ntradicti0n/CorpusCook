@@ -70,16 +70,16 @@ class JSONB64COMPRESS(Argument):
                 str(json.dumps(inObject)).encode('ascii')
             )
         )
-        l_before = len(json.dumps(inObject).encode('ascii'))
-        l_after = len(base64.b64encode(zlib.compress(json.dumps(inObject).encode('ascii'))).decode('utf-8'))
-        logging.info('compression: %dkB to %dkB, means to %2.1f%% of the original' % (l_before/1000, l_after/1000, 100/(l_before/l_after)))
+        #l_before = len(json.dumps(inObject).encode('ascii'))
+        #l_after = len(base64.b64encode(zlib.compress(json.dumps(inObject).encode('ascii'))).decode('utf-8'))
+        #logging.info('compression: %dkB to %dkB, means to %2.1f%% of the original' % (l_before/1000, l_after/1000, 100/(l_before/l_after)))
         return encoded
 
     def fromString(self, inString):
         decoded = json.loads(zlib.decompress(base64.b64decode(inString)))
-        l_before = len(inString)
-        l_after = len(str(decoded))
-        logging.info('compression: %dkB to %dkB, means to %2.1f%% of the original' % (l_before/1000, l_after/1000, 100/(l_before/l_after)))
+        #l_before = len(inString)
+        #l_after = len(str(decoded))
+        #logging.info('compression: %dkB to %dkB, means to %2.1f%% of the original' % (l_before/1000, l_after/1000, 100/(l_before/l_after)))
 
         return decoded
 
