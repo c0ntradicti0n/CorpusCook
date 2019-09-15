@@ -19,7 +19,10 @@ class Sampler:
                 yield line
 
     def deliver_sample(self):
-        return next(self.read_library_f)
+        try:
+            return next(self.read_library_f)
+        except StopIteration:
+            return next(self.read_library_f)
 
     def complicated_sample(self, text):
         with open("./server_complicated.txt", 'a+') as f:

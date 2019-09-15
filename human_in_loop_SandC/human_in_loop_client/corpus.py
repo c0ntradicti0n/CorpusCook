@@ -92,7 +92,7 @@ class Corpus:
             pos_tag = "-".join([tag[0], pos] if tag[0] != 'O' else 'O')
             line = "  ".join([token, pos, pos_tag, tag])
             if not conll_line.match(line):
-                raise AssertionError
+                raise ValueError("%s doesn't fit conll3 format" % line)
             conll_lines.append(line)
 
         if check:
