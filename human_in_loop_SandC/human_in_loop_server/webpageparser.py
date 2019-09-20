@@ -15,7 +15,10 @@ def get_files_from_path(path):
             yield str(Path(f).resolve())
 
 class WebPageParser:
-    def __init__(self, path_to_htmls=None):
+    def __init__(self, path_to_htmls=None, yet_path = "./yet.txt"):
+        self.yet_path = yet_path
+        with open(yet_path, 'r') as f:
+            self.yet = f.readlines()
         self.html_paths = get_files_from_path(path_to_htmls + WebPageParser.recursive_html_indexes_path)
         next(self.html_paths)
 
@@ -77,7 +80,16 @@ class WebPageParser:
 
         if not text:
             return self.next_text()
+        if html_path in self.yet:
+            return self.next_text()
+
+        self.that_have_been_now(html_path)
         return text
+
+    def that_have_been_now(self, path):
+        self.yet.append(path)
+        with open(self.yet_path, 'a+') as f:
+            f.write(path + '\n')
 
 
 
