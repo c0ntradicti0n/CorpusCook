@@ -37,7 +37,6 @@ class Annotation_Screen(Screen):
 
 class Manipulation_Screen(Screen):
     pass
-
 class Sample_Screen(Screen):
     pass
 

@@ -4,10 +4,9 @@ class TextStore:
         self.sentences = self.read_samples_from_list()
 
     def next_one (self):
-        try:
-            return next(self.sentences)
-        except StopIteration:
-            return None
+        for n in self.sentences:
+            if n not in self.yet:
+                yield n
 
     def rest_ones(self):
         yield from self.next_one()
@@ -19,4 +18,5 @@ class TextStore:
     def read_samples_from_list(self):
         with open(self.path, "r") as f:
             for line in f.readlines():
-                yield line.strip()
+                    yield line.strip()
+

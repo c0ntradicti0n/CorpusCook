@@ -54,10 +54,32 @@ def write_conll_file (path, samples):
 set_layout = {'train':0.8,
               'test':0.2}
 
+
+def zeroize(sample):
+    return "\n".join([re.sub(conll_line, r"\1  \2  O  O", line) for line in sample.split('\n')])
+
+def add_only_first_of_pair(samples, how_much):
+    pairs = list(zip(samples, samples[1:] + samples[:1]))
+    z_pairs = ["\n".join([s,zeroize(z)]) for s,z in pairs]
+    return samples + z_pairs[:len(z_pairs)*how_much]
+
+def limit_length(samples):
+    return [s for s in samples if len(s.split('\n')) < 300]
+
+
+
 def mix_files():
     relevant_files_paths = list(get_files_from_recursive_path(manual_samples_dir + "hil*.conll3"))
+
+    # filtering, changing samples
     all_samples = list(flatten([read_conll_file(path) for path in relevant_files_paths]))
+    all_samples = add_only_first_of_pair(all_samples, 0.2)
+    all_samples = limit_length(all_samples)
     random.shuffle(all_samples)
+
+    print ("maximal len is %s" % max([len(s.split('\n')) for s in all_samples]))
+
+    # splitting
     tvt = percentage_split(all_samples, list(set_layout.values()))
     names = list(set_layout.keys())
     for name, samples in zip (names, tvt):
