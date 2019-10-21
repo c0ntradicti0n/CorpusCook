@@ -28,6 +28,8 @@ class WebPageParser:
         with open(path, 'r+') as f:
             return f.read()
 
+    allowed_chars = sorted(""" !?$%&()+,-\.\/0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZ\(\)\[\]_`abcdefghijklmnopqrstuvwxyz‘’“”\n""")
+
     def html_to_text(self, html):
         soup = BeautifulSoup(html, features="lxml")
         post = soup.find('div', class_='post')
@@ -40,6 +42,7 @@ class WebPageParser:
             return None
         text = text_with_correct_beginning[:correct_end]
         text = self.clean_text(text)
+        text = "".join([c for c in text if c in self.allowed_chars])
         return text
 
     def sanitize_html(self, dirty_html):

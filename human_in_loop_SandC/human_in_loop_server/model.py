@@ -3,7 +3,10 @@ import itertools
 import logging
 import operator
 
-from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
+from typing import List
+
+from human_in_loop_SandC.human_in_loop_server.allennlp_predictor import SentenceTaggerPredictor as Predictor
+#from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
 import attention_please_tagger
 
 
@@ -20,7 +23,8 @@ class Model:
     def __init__(self, model_path):
         self.model = Predictor.from_path(model_path)
 
-    def predict(self, sentence):
+    def predict_sentence(self, sentence: str):
+        print ("SENTENCE", sentence)
         try:
             results = self.model.predict_json({"sentence": sentence})
         except builtins.KeyError:

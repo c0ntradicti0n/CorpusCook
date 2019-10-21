@@ -43,7 +43,7 @@ class AnnotationCloud(amp.AMP):
     def makeproposals(self, text):
         if not text:
             text = difference_pages.next_text()
-        proposals = proposaler.make_proposals(text)
+        proposals = list(proposaler.make_proposals(text))
         self.log_before_after('MakeProposals', text, proposals)
         return {'proposals': proposals}
 
