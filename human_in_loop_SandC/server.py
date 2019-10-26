@@ -94,7 +94,7 @@ def main():
     protofacto = Factory()
     protofacto.protocol = AnnotationCloud
     reactor.listenTCP(5180, protofacto)
-    logging.warning('Server started, waiting for commands')
+    logging.info('Server started, waiting for commands')
     reactor.run()
 
 if __name__ == '__main__':
