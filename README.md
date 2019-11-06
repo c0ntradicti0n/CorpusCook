@@ -191,14 +191,19 @@ dataset_reader.feature_labels = ()
 dataset_reader.lazy = False
 dataset_reader.coding_scheme = BIOUL
 dataset_reader.label_namespace = labels
-Server started, waiting for commands
-```
+Server started, waiting for commands ```
 
 When a command was called like making predictions, the server makes this prediction and sends it back.
 So, when using my difference-between-model on some Adoph Grünbaum statement over Aristotle distinguishing knowing-why and knowing-how, it may print:
 
 ```buildoutcfg
-SENTENCE Specifically , he distinguished between know-how ( the sort of knowledge which the craftsman and the engineer possess ) and what we might call know-why or demonstrative understanding ( which the scientist alone possesses ) . A shipbuilder , for instance , knows how to form pieces of wood together so as to make a seaworthy vessel ; but he does not have , and has no need for , a syllogistic , causal demonstration based on the primary principles or first causes of things . Thus , he needs to know that wood , when properly sealed , floats ; but he need not be able to show by virtue of what principles and causes wood has this property of buoyancy .
+SENTENCE Specifically , he distinguished between know-how ( the sort of knowledge which the craftsman 
+and the engineer possess ) and what we might call know-why or demonstrative understanding ( which the 
+scientist alone possesses ) . A shipbuilder , for instance , knows how to form pieces of wood together 
+so as to make a seaworthy vessel ; but he does not have , and has no need for , a syllogistic , causal 
+demonstration based on the primary principles or first causes of things . Thus , he needs to know that 
+wood , when properly sealed , floats ; but he need not be able to show by virtue of what principles 
+and causes wood has this property of buoyancy .
 [[(360, 'O'), (361, 'O'), (362, 'O'), (363, 'O'), (364, 'O')],
  [(365, 'B-SUBJECT'),
   (366, 'I-CONTRAST'),
