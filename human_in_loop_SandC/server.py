@@ -10,8 +10,6 @@ import xnym_embeddings.xnym_embeddings
 import attention_please_tagger.attention_please_tagger
 import spacy_embedder.spacy_embedder
 
-
-
 corpus = Corpus(path='server_annotations.conll3')
 sampler = Sampler(sample_file='server_samples_bin.txt')
 difference_pages = WebPageParser(path_to_htmls='../scraping/data')
@@ -31,7 +29,7 @@ class AnnotationCloud(amp.AMP):
 
     @MakePrediction.responder
     def makeprediction(self, text):
-        annotation = model.predict(text)
+        annotation = model.predict_sentence(text)
         self.log_before_after('MakePrediction', text, annotation)
         return {'annotation': annotation}
 
@@ -45,7 +43,7 @@ class AnnotationCloud(amp.AMP):
     def makeproposals(self, text):
         if not text:
             text = difference_pages.next_text()
-        proposals = proposaler.make_proposals(text)
+        proposals = list(proposaler.make_proposals(text))
         self.log_before_after('MakeProposals', text, proposals)
         return {'proposals': proposals}
 
@@ -73,6 +71,7 @@ class AnnotationCloud(amp.AMP):
         self.log_before_after('SaveSample', text, None)
         return {'done': 'yes'}
 
+
     @ZeroAnnotation.responder
     def zeroannotation(self, text):
         corpus.save_zero_annotation(text)
@@ -83,13 +82,12 @@ class AnnotationCloud(amp.AMP):
     def deliverpage(self):
         while True:
             try:
-               return {'text':difference_pages.next_text()}
+                return {'text': difference_pages.next_text()}
             except StopIteration:
                 raise FileNotFoundError(
                     "No pages anymore")
             # TODO
             #  pages store empty: err callback to lead to generating more pages
-
 
 def main():
     from twisted.internet import reactor
@@ -97,7 +95,7 @@ def main():
     protofacto = Factory()
     protofacto.protocol = AnnotationCloud
     reactor.listenTCP(5180, protofacto)
-    logging.warning('Server started, waiting for commands')
+    logging.info('Server started, waiting for commands')
     reactor.run()
 
 if __name__ == '__main__':

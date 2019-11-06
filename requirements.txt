@@ -32,3 +32,4 @@ pandas
 gensim
 nltk
 pyLDAvis
+more-itertools
