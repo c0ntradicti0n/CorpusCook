@@ -71,8 +71,6 @@ class Corpus:
         annotation = list(zip(tokens, o_s))
         self.write_annotation(annotation, check=False)
 
-
-
     def token_pos_tag_to_conll3(self, combos, check=True):
         conll_lines = []
         span_delims = []
@@ -90,9 +88,12 @@ class Corpus:
             span_delims.append(tag[0])
 
             pos_tag = "-".join([tag[0], pos] if tag[0] != 'O' else 'O')
-            line = "  ".join([token, pos, pos_tag, tag])
+            try:
+                line = "  ".join([token, pos, pos_tag, tag])
+            except TypeError:
+                raise
             if not conll_line.match(line):
-                raise AssertionError
+                raise ValueError("%s doesn't fit conll3 format" % line)
             conll_lines.append(line)
 
         if check:
