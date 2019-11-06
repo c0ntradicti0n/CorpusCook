@@ -29,7 +29,7 @@ class AnnotationCloud(amp.AMP):
 
     @MakePrediction.responder
     def makeprediction(self, text):
-        annotation = model.predict(text)
+        annotation = model.predict_sentence(text)
         self.log_before_after('MakePrediction', text, annotation)
         return {'annotation': annotation}
 
@@ -70,6 +70,7 @@ class AnnotationCloud(amp.AMP):
         sampler.add_to_library(text)
         self.log_before_after('SaveSample', text, None)
         return {'done': 'yes'}
+
 
     @ZeroAnnotation.responder
     def zeroannotation(self, text):

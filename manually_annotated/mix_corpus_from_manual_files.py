@@ -68,7 +68,7 @@ def add_only_first_of_pair(samples, how_much):
     return samples + z_pairs[:int(len(z_pairs)*how_much)]
 
 def limit_length(samples):
-    return [s for s in samples if len(s.split('\n')) < 200]
+    return [s for s in samples if len(s.split('\n')) < 210]
 
 
 

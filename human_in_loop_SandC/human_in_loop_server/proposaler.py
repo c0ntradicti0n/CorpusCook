@@ -47,15 +47,10 @@ class Proposaler:
         self.id_source = next_natural_number()
         next(self.id_source)
 
-    allowed_chars = sorted(""" !?$%&()+,-.\ 0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZ()[]_`abcdefghijklmnopqrstuvwxyz‘’“”\n""")
-    def clean(self, text: str) -> str:
-        text = re.sub(r'\s+', ' ', text)
-        text = "".join([c for c in text if c in self.allowed_chars])
-        text = re.sub(r'\s+', ' ', text)
-        return text.strip()
+
 
     def make_proposals(self, text):
-        text =  self.clean(text)
+        text =  self.model.clean(text)
 
         self.doc  = nlp(text)
         sent_cuts = [sp.start for sp in self.doc.sents]
@@ -120,24 +115,26 @@ class Proposaler:
         if not text:
             raise ValueError("no text in given span")
 
-        text =  self.clean(text)
+        text =  self.model.clean(text)
         annotation = self.model.predict_sentence(text)
 
         tokens = [x[0] for x in annotation]
         tags = [x[1] for x in annotation]
         relevant_tags =  [x != "O" for x in tags]
-
+        number_of_annotations = [t[0] for t in tags].count('B')
 
         annotation_groups = list(split_before(zip(indices, tags), lambda x: x[1][0] == 'B'))
+
         pprint (annotation_groups)
         subs = []
-        if True in relevant_tags and depth <= max_depth:
+        if True in relevant_tags and depth < max_depth:
             # global position of span end of annotation
             mark_end = len(relevant_tags) - relevant_tags[::-1].index(True)  # last tags (look backwards and index first True and thats the position from the end
 
-            if len(annotation_groups)>=2:
+            if number_of_annotations>=2:
                 # positions of group starts until end
-                middles = set([sentence_cuts[Proposaler.nearest(b[0][0], sentence_cuts, before=True)] for b in annotation_groups] + [indices[-1]+2])
+                middles = set([sentence_cuts[Proposaler.nearest(b[0][0], sentence_cuts, before=True)] for b in annotation_groups] +
+                              [indices[-1]+2])
                 # approximate closest sentence borders before each annotation
                 # make new predictions for sides of distinctions
                 print ([(group[0][0], group[-1][0])
@@ -145,14 +142,15 @@ class Proposaler:
                 try:
                     subs = [
                         self.get_sample(
-                            group[0][0],
-                            group[-1][0],
-                            self.doc[group[0][0]: group[-1][0]],
-                            sentence_cuts,
-                            depth=depth+1,
-                            max_depth=max_depth
+                            start_i       = group[0][0],
+                            end_i         = group[-1][0],
+                            sentence_span = self.doc[group[0][0]: group[-1][0]],
+                            sentence_cuts = sentence_cuts,
+                            depth         = depth+1,
+                            max_depth     = max_depth
                          ) for group in annotation_groups]
                     print (subs)
+                    mark_end = max([mark_end, *[s['mark_end'] for s in subs]])
                 except Exception as e:
                     print (str(e))
                 if not len(subs)>=2 and all(subs):
