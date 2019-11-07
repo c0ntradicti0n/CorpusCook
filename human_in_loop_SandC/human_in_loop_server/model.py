@@ -12,7 +12,7 @@ from regex import regex as re
 from helpers.list_tools import threewise
 from human_in_loop_SandC.human_in_loop_server.allennlp_predictor import SentenceTaggerPredictor as Predictor
 #from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
-import attention_please_tagger
+#import attention_please_tagger
 
 
 from human_in_loop_client.corpus import Corpus

@@ -6,6 +6,23 @@ For instance there is a tool for extracting text from tables, doing OCR on the s
 
 Another thing is a server, that holds the model and corpus manipulation tools on a server for making predictions and updating the corpus in its lifecycle. This means, that corpora get outdated if counterexamples are found, Their corrected annotation should be corrected and added to the corpus.and the model trained again.
 
+# Prerequisits
+
+Clone repository
+
+   ```git clone https://github.com/c0ntradicti0n/CorpusCook.git```
+
+Install torch first (because of allennlp)
+
+   [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
+
+Install `pip install -r requirements.txt`
+
+Pre
+
+
+
+
 Starting the server with 
 ```
 python human_in_loop_SandC/server.py
