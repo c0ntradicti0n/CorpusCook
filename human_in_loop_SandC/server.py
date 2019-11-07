@@ -6,13 +6,13 @@ from human_in_loop_SandC.human_in_loop_server.sampler import Sampler
 from human_in_loop_SandC.human_in_loop_client.corpus import Corpus
 from human_in_loop_SandC.human_in_loop_server.webpageparser import WebPageParser
 
-import xnym_embeddings.xnym_embeddings
-import attention_please_tagger.attention_please_tagger
-import spacy_embedder.spacy_embedder
+#import xnym_embeddings.xnym_embeddings
+import attentivecrftagger.attentivecrftagger
+#import spacy_embedder.spacy_embedder
 
 corpus = Corpus(path='server_annotations.conll3')
 sampler = Sampler(sample_file='server_samples_bin.txt')
-difference_pages = WebPageParser(path_to_htmls='../scraping/data')
+difference_pages = None #WebPageParser(path_to_htmls='../scraping/data')
 model = Model(model_path="human_in_loop_server/ai_models/models/model.tar.gz")
 proposaler = Proposaler(model)
 

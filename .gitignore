@@ -8,7 +8,7 @@ human_in_loop_SandC/human_in_loop_server/ai_models/others_models
 grammer_text_fit/output
 grammer_text_fit/tagml
 .alexandria
-cache
+*.dump
 tests
 venv
 *.pyc

@@ -1,5 +1,7 @@
 pytesseract
 pdftabextract
+pytorch=0.4.1
+pywsd
 allennlp
 hypothesis==3.6.1
 numpy==1.16.1
