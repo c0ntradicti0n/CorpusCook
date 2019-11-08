@@ -7,6 +7,7 @@ import os
 
 from typing import List
 
+from allennlp.data.tokenizers.word_splitter import SimpleWordSplitter
 from regex import regex as re
 
 from helpers.list_tools import threewise
@@ -28,6 +29,7 @@ import pickle
 class Model:
     def __init__(self, model_path):
         self.model = Predictor.from_path(model_path)
+        self.model._tokenizer = SimpleWordSplitter()
 
     allowed_chars = sorted(
         """ !?$%&()+,-.\ 0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZ()[]_`abcdefghijklmnopqrstuvwxyz‘’“”\n""")
