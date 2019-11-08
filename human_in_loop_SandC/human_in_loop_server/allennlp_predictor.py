@@ -1,7 +1,7 @@
 from typing import List, Dict
 from copy import deepcopy
 
-from gluonnlp.data import SpacyTokenizer
+from allennlp.data.tokenizers.spacy_tokenizer import SpacyTokenizer
 from overrides import overrides
 import numpy
 
@@ -12,7 +12,7 @@ from allennlp.models import Model
 from allennlp.predictors.predictor import Predictor
 
 
-@Predictor.register("sentence-tagger---")
+@Predictor.register("sentence-tagger")
 class SentenceTaggerPredictor(Predictor):
     """
     Predictor for any model that takes in a sentence and returns
