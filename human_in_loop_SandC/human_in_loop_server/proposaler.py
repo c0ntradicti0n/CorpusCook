@@ -121,6 +121,8 @@ class Proposaler:
         tokens = [x[0] for x in annotation]
         tags = [x[1] for x in annotation]
         relevant_tags =  [x != "O" for x in tags]
+        beginning_tags =  [x for x in tags if x[0] == 'B']
+
         number_of_annotations = [t[0] for t in tags].count('B')
 
         annotation_groups = list(split_before(zip(indices, tags), lambda x: x[1][0] == 'B'))
@@ -153,8 +155,7 @@ class Proposaler:
                     mark_end = max([mark_end, *[s['mark_end'] for s in subs]])
                 except Exception as e:
                     print (str(e))
-                if not len(subs)>=2 and all(subs):
-                    subs = []
+                subs = [s for s in subs if s['difference']]
 
         else:
             mark_end = len(tokens)
@@ -166,7 +167,8 @@ class Proposaler:
             'start': start_i,
             'id': next(self.id_source),
             'mark_end': mark_end,
-            'difference':any(relevant_tags),
+            'annotated': any(relevant_tags),
+            'difference': number_of_annotations >=2 ,
             'subs': subs
         }
 
