@@ -9,7 +9,7 @@ import regex as re
 
 nlp = spacy.load("en_core_sci_sm")
 
-from human_in_loop_SandC.human_in_loop_server import bio_annotation
+from server.core import bio_annotation
 
 
 def next_natural_number():
