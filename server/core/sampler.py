@@ -1,6 +1,3 @@
-from grammer_text_fit.config import input_dir, process_dir, output_dir, input_html_file_filter
-
-
 class Sampler:
     def __init__(self, sample_file):
         self.sample_file = sample_file
