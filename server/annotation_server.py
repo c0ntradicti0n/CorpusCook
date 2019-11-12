@@ -1,20 +1,24 @@
-from human_in_loop_SandC.human_in_loop_client.annotation_protocol import *
+from server.core.annotation_protocol import *
 
-from human_in_loop_SandC.human_in_loop_server.model import Model
-from human_in_loop_SandC.human_in_loop_server.proposaler import Proposaler
-from human_in_loop_SandC.human_in_loop_server.sampler import Sampler
-from human_in_loop_SandC.human_in_loop_client.corpus import Corpus
-from human_in_loop_SandC.human_in_loop_server.webpageparser import WebPageParser
+from server.core.model import Model
+from server.core.proposaler import Proposaler
+from server.core.sampler import Sampler
+from server.core.corpus import Corpus
 
 #import xnym_embeddings.xnym_embeddings
-import attentivecrftagger.attentivecrftagger
 #import spacy_embedder.spacy_embedder
+#from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
+import customCrfTagger.cCrfT
 
-corpus = Corpus(path='server_annotations.conll3')
-sampler = Sampler(sample_file='server_samples_bin.txt')
+sampler = Sampler(sample_file='samples/server_samples_bin.txt')
 difference_pages = None #WebPageParser(path_to_htmls='../scraping/data')
-model = Model(model_path="human_in_loop_server/ai_models/models/model.tar.gz")
-proposaler = Proposaler(model)
+corpus_first = Corpus(path='corpus/first.conll3')
+corpus_over = Corpus(path='corpus/over.conll3')
+
+
+model_first = Model(model_path="models/model_first.tar.gz")
+model_over =  Model(model_path="models/model_over.tar.gz")
+proposaler = Proposaler(model_first)
 
 
 import pprint
@@ -29,7 +33,7 @@ class AnnotationCloud(amp.AMP):
 
     @MakePrediction.responder
     def makeprediction(self, text):
-        annotation = model.predict_sentence(text)
+        annotation = model_first.predict_sentence(text)
         self.log_before_after('MakePrediction', text, annotation)
         return {'annotation': annotation}
 
@@ -54,9 +58,20 @@ class AnnotationCloud(amp.AMP):
         return {'proposals': proposals, 'indices': indices, 'delete_add': delete_add}
 
     @SaveAnnotation.responder
-    def saveannotation(self, annotation):
-        corpus.write_annotation(annotation)
+    def saveannotation(self, annotation, which):
+        if which == "first":
+            corpus_first.write_annotation(annotation)
+        elif which == "over":
+            corpus_over.write_annotation(annotation)
+        else:
+            raise ValueError("wrong value to choose the corpus")
         self.log_before_after('SaveAnnotation', annotation, None)
+        return {'done': 'yes'}
+
+    @ZeroAnnotation.responder
+    def zeroannotation(self, text, which):
+        corpus.save_zero_annotation(text, which)
+        self.log_before_after('ZeroAnnotation', text, None)
         return {'done': 'yes'}
 
     @SaveComplicated.responder
@@ -72,11 +87,7 @@ class AnnotationCloud(amp.AMP):
         return {'done': 'yes'}
 
 
-    @ZeroAnnotation.responder
-    def zeroannotation(self, text):
-        corpus.save_zero_annotation(text)
-        self.log_before_after('ZeroAnnotation', text, None)
-        return {'done': 'yes'}
+
 
     @DeliverPage.responder
     def deliverpage(self):

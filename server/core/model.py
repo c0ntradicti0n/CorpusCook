@@ -5,19 +5,12 @@ import logging
 import operator
 import os
 
-from typing import List
 
-from allennlp.data.tokenizers.spacy_tokenizer import _WhitespaceSpacyTokenizer, SpacyTokenizer
-from allennlp.data.tokenizers.word_splitter import SimpleWordSplitter
+from allennlp.data.tokenizers.spacy_tokenizer import SpacyTokenizer
 from regex import regex as re
-
 from helpers.list_tools import threewise
-from human_in_loop_SandC.human_in_loop_server.allennlp_predictor import SentenceTaggerPredictor as Predictor
-#from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
-#import attention_please_tagger
-
-
-from human_in_loop_client.corpus import Corpus
+from server.core.allennlp_predictor import SentenceTaggerPredictor as Predictor
+from server.core.corpus import Corpus
 
 def split_list_on_lambda(l, lam):
     ''' split a list of anything based on a lambda, so that the splitting element is the first of each group '''
