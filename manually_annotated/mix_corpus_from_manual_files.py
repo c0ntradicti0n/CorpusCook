@@ -73,7 +73,7 @@ def limit_length(samples):
 
 
 def mix_files():
-    relevant_files_paths = list(get_files_from_recursive_path(manual_samples_dir + "hil*.conll3"))
+    relevant_files_paths = list(get_files_from_recursive_path(manual_samples_dir + "/thematic/*.conll3"))
     pprint (relevant_files_paths)
 
     # filtering, changing samples
