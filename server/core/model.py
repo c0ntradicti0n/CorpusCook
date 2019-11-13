@@ -5,8 +5,8 @@ import logging
 import operator
 import os
 
-
-from allennlp.data.tokenizers.spacy_tokenizer import SpacyTokenizer
+#from allennlp.data.tokenizers.spacy_tokenizer import SpacyTokenizer
+from allennlp.data.tokenizers.word_splitter import WhitespaceTokenizer, JustSpacesWordSplitter
 from regex import regex as re
 from helpers.list_tools import threewise
 from server.core.allennlp_predictor import SentenceTaggerPredictor as Predictor
@@ -23,7 +23,7 @@ import pickle
 class Model:
     def __init__(self, model_path):
         self.model = Predictor.from_path(model_path)
-        self.model._tokenizer = SpacyTokenizer(split_on_spaces=True)
+        self.model._tokenizer = JustSpacesWordSplitter() #SpacyTokenizer(split_on_spaces=True)
 
     allowed_chars = sorted(
         """ !?$%&()+,-.\ 0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZ()[]_`abcdefghijklmnopqrstuvwxyz‘’“”\n""")

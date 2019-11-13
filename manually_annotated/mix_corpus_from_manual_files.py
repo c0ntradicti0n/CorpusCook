@@ -1,3 +1,4 @@
+import os
 import random
 from collections import Counter
 from pprint import pprint
@@ -70,32 +71,36 @@ def add_only_first_of_pair(samples, how_much):
 def limit_length(samples):
     return [s for s in samples if len(s.split('\n')) < 210]
 
-
+models  =  ['first', 'over']
 
 def mix_files():
-    relevant_files_paths = list(get_files_from_recursive_path(manual_samples_dir + "/thematic/*.conll3"))
-    pprint (relevant_files_paths)
+    for model in models:
+        relevant_files_paths = list(get_files_from_recursive_path(manual_samples_dir + "topics/**/{model}.conll3".format(model=model)))
+        pprint (relevant_files_paths)
 
-    # filtering, changing samples
-    all_samples = list(flatten([read_conll_file(path) for path in relevant_files_paths]))
-    all_samples = add_only_first_of_pair(all_samples, 0.1)
-    all_samples = limit_length(all_samples)
-    random.shuffle(all_samples)
+        # filtering, changing samples
+        all_samples = list(flatten([read_conll_file(path) for path in relevant_files_paths]))
+        all_samples = add_only_first_of_pair(all_samples, 0.1)
+        all_samples = limit_length(all_samples)
+        random.shuffle(all_samples)
 
-    print ("maximal len is %s" % max([len(s.split('\n')) for s in all_samples]))
+        print ("maximal len is %s" % max([len(s.split('\n')) for s in all_samples]))
 
-    # splitting
-    tvt = percentage_split(all_samples, list(set_layout.values()))
-    names = list(set_layout.keys())
-    for name, samples in zip (names, tvt):
-        print ("%s-set contains %d samples" %(name, len(samples)) )
-        write_conll_file(manual_samples_dir + name + '.conll3x', samples)
-        sanitize_conll(manual_samples_dir + name + '.conll3x')
+        # splitting
+        tvt = percentage_split(all_samples, list(set_layout.values()))
+        names = list(set_layout.keys())
+        for name, samples in zip (names, tvt):
+            path = manual_samples_dir + name + "_" + model +'.conll3x'
+            print ("%s-set contains %d samples" %(name, len(samples)) )
+            write_conll_file(path, samples)
+            sanitize_conll(path)
+            os.remove(path)
 
 mix_files()
 
-with open (manual_samples_dir +"train.conll3") as f:
-    t = f.read()
-    all_chars = Counter(t)
-    print("".join(sorted(set(all_chars.keys()))))
+for model in models:
+    with open (manual_samples_dir +"train_" + model +".conll3") as f:
+        t = f.read()
+        all_chars = Counter(t)
+        print("".join(sorted(set(all_chars.keys()))))
 
