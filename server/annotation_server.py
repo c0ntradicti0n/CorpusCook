@@ -70,7 +70,11 @@ class AnnotationCloud(amp.AMP):
 
     @ZeroAnnotation.responder
     def zeroannotation(self, text, which):
-        corpus.save_zero_annotation(text, which)
+        if which=="first":
+             corpus_first.save_zero_annotation(text)
+        elif which=="over":
+            corpus_over.save_zero_annotation(text)
+
         self.log_before_after('ZeroAnnotation', text, None)
         return {'done': 'yes'}
 
