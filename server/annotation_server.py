@@ -18,7 +18,7 @@ corpus_over = Corpus(path='corpus/over.conll3')
 
 model_first = Model(model_path="models/model_first.tar.gz")
 model_over =  Model(model_path="models/model_over.tar.gz")
-proposaler = Proposaler(model_first)
+proposaler = Proposaler(model_first, model_over)
 
 
 import pprint
