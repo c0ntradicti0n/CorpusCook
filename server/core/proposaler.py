@@ -38,9 +38,10 @@ def approx_unique(urn=[], choices=[], variance=0.005):
 
 
 class Proposaler:
-    def __init__(self, model_to_predict, max_len = 100):
+    def __init__(self, model_first, model_over, max_len = 100):
 
-        self.model = model_to_predict
+        self.model_first = model_first
+        self.model_second = model_over
         self.max_len = max_len
         self.annotation_scheme = bio_annotation
 
@@ -50,7 +51,7 @@ class Proposaler:
 
 
     def make_proposals(self, text):
-        text =  self.model.clean(text)
+        text =  self.model_first.clean(text)
 
         self.doc  = nlp(text)
         sent_cuts = [sp.start for sp in self.doc.sents]
