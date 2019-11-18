@@ -72,6 +72,11 @@ def limit_length(samples):
     return [s for s in samples if len(s.split('\n')) < 210]
 
 models  =  ['first', 'over']
+short_dummy = True;
+copy = []
+if short_dummy:
+    set_layout = {'train': 1}
+    set_copy = ['train', 'valid', 'test']
 
 def mix_files():
     for model in models:
@@ -95,6 +100,13 @@ def mix_files():
             write_conll_file(path, samples)
             sanitize_conll(path)
             os.remove(path)
+            if short_dummy:
+                for cp in set_copy[1:]:
+                    tr_path = manual_samples_dir + name + "_" + model + '.conll3'
+                    cp_path = manual_samples_dir + cp + "_" + model + '.conll3'
+
+                    os.system("cp {path} {cp_path}".format(path=tr_path, cp_path=cp_path))
+
 
 mix_files()
 
@@ -103,4 +115,9 @@ for model in models:
         t = f.read()
         all_chars = Counter(t)
         print("".join(sorted(set(all_chars.keys()))))
+
+
+
+
+
 
