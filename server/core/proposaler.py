@@ -1,4 +1,5 @@
 import itertools
+import logging
 from pprint import pprint
 from typing import List
 
@@ -64,14 +65,15 @@ class Proposaler:
             if span in done:
                 print ("repeating work, why?")
                 start_i =  end_i
-                end_i = start_i + 4
+                end_i = start_i + 5
             result = self.get_sample(start_i, end_i, self.doc[span[0]:span[1]], sent_cuts)
             done.append(span)
 
             last_start_i, last_end_i = start_i, end_i
             yield result
             last_mark = sent_cuts[start_i] + result['mark_end']
-            new_start_i = sent_cuts.index(min (sent_cuts, key= lambda x: abs(last_mark-x)))
+            next_position = min(sent_cuts, key=lambda x: abs(last_mark - x))
+            new_start_i = sent_cuts.index(next_position)
             start_i = start_i if new_start_i == start_i else new_start_i
             start_i, end_i = self.next_proposal(self.doc, sent_cuts, start_i)
             if start_i < last_end_i:
@@ -99,7 +101,7 @@ class Proposaler:
         reasonable_samples = (self.get_sample_if_reasonable(r) for r in windows)
         return [r for r in reasonable_samples if r]
 
-    def get_sample(self, start_i, end_i, sentence_span,  sentence_cuts, depth = 0, max_depth = 1):
+    def get_sample(self, start_i, end_i, sentence_span,  sentence_cuts, depth = 0, max_depth = 2, which='first'):
         """ make the prediction based on some parts of the text, optionally regarding also distinctions, that appear
         within the sides or arms of a found distinction
 
@@ -114,10 +116,17 @@ class Proposaler:
         text = " ".join([t.text for t in sentence_span])
         indices = [t.i for t in sentence_span]
         if not text:
-            raise ValueError("no text in given span")
+            logging.error(ValueError("no text in given span").__repr__())
+            return {'difference':False}
 
-        text =  self.model.clean(text)
-        annotation = self.model.predict_sentence(text)
+        if which == 'first':
+            model = self.model_first
+        else:
+            model = self.model_second
+
+
+        text =  model.clean(text)
+        annotation = model.predict_sentence(text)
 
         tokens = [x[0] for x in annotation]
         tags = [x[1] for x in annotation]
@@ -140,23 +149,19 @@ class Proposaler:
                               [indices[-1]+2])
                 # approximate closest sentence borders before each annotation
                 # make new predictions for sides of distinctions
-                print ([(group[0][0], group[-1][0])
-                         for group in annotation_groups])
-                try:
-                    subs = [
+                subs = [
                         self.get_sample(
                             start_i       = group[0][0],
                             end_i         = group[-1][0],
                             sentence_span = self.doc[group[0][0]: group[-1][0]],
                             sentence_cuts = sentence_cuts,
                             depth         = depth+1,
-                            max_depth     = max_depth
+                            max_depth     = max_depth,
+                            which = 'over'
                          ) for group in annotation_groups]
-                    print (subs)
-                    mark_end = max([mark_end, *[s['mark_end'] for s in subs]])
-                except Exception as e:
-                    print (str(e))
                 subs = [s for s in subs if s['difference']]
+
+                mark_end = max([mark_end, *[s['mark_end'] for s in subs]])
 
         else:
             mark_end = len(tokens)
@@ -165,6 +170,7 @@ class Proposaler:
             'indices': indices,
             'tokens': tokens,
             'text': text,
+            'depth': depth,
             'start': start_i,
             'id': next(self.id_source),
             'mark_end': mark_end,
