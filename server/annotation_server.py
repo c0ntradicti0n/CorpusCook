@@ -1,9 +1,10 @@
-from server.core.annotation_protocol import *
 
-from server.core.model import Model
-from server.core.proposaler import Proposaler
-from server.core.sampler import Sampler
-from server.core.corpus import Corpus
+from core.annotation_protocol import *
+
+from core.model import Model
+from core.proposaler import Proposaler
+from core.sampler import Sampler
+from core.corpus import Corpus
 
 #import xnym_embeddings.xnym_embeddings
 #import spacy_embedder.spacy_embedder
@@ -12,12 +13,12 @@ import customCrfTagger.cCrfT
 
 sampler = Sampler(sample_file='samples/server_samples_bin.txt')
 difference_pages = None #WebPageParser(path_to_htmls='../scraping/data')
-corpus_first = Corpus(path='corpus/first.conll3')
-corpus_over = Corpus(path='corpus/over.conll3')
+corpus_first = Corpus(path='server/corpus/first.conll3')
+corpus_over = Corpus(path='server/corpus/over.conll3')
 
 
-model_first = Model(model_path="models/model_first.tar.gz")
-model_over =  Model(model_path="models/model_over.tar.gz")
+model_first = Model(model_path="server/models/model_first.tar.gz")
+model_over =  Model(model_path="server/models/model_over.tar.gz")
 proposaler = Proposaler(model_first, model_over)
 
 
