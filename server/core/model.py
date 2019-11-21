@@ -39,7 +39,7 @@ class Model:
         sentence = self.clean(sentence)
         print ("SENTENCE", sentence)
         hash = pickle.dumps(sentence)
-        path = "../cache/predictions/" + hashlib.md5(str(hash).encode('utf-8')).hexdigest() + ".dump"
+        path = "cache/predictions/" + hashlib.md5(str(hash).encode('utf-8')).hexdigest() + ".dump"
         if os.path.isfile(str(path)):
             with open(path, 'rb') as config_dictionary_file:
                 return pickle.load(config_dictionary_file)
