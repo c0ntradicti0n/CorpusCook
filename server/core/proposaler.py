@@ -101,7 +101,7 @@ class Proposaler:
         reasonable_samples = (self.get_sample_if_reasonable(r) for r in windows)
         return [r for r in reasonable_samples if r]
 
-    def get_sample(self, start_i, end_i, sentence_span,  sentence_cuts, depth = 0, max_depth = 2, which='first'):
+    def get_sample(self, start_i, end_i, sentence_span,  sentence_cuts, depth = 0, max_depth = 0, which='first'):
         """ make the prediction based on some parts of the text, optionally regarding also distinctions, that appear
         within the sides or arms of a found distinction
 
@@ -139,9 +139,14 @@ class Proposaler:
 
         pprint (annotation_groups)
         subs = []
-        if True in relevant_tags and depth < max_depth:
+        if True in relevant_tags:
             # global position of span end of annotation
             mark_end = len(relevant_tags) - relevant_tags[::-1].index(True)  # last tags (look backwards and index first True and thats the position from the end
+        else:
+            mark_end = len(tokens)
+
+
+        if True in relevant_tags and depth < max_depth:
 
             if number_of_annotations>=2:
                 # positions of group starts until end
@@ -163,8 +168,6 @@ class Proposaler:
 
                 mark_end = max([mark_end, *[s['mark_end'] for s in subs]])
 
-        else:
-            mark_end = len(tokens)
         return {
             'annotation': annotation,
             'indices': indices,
