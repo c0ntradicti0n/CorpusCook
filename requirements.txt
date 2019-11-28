@@ -1,11 +1,9 @@
 pytesseract
 pdftabextract
-pytorch=0.4.1
+pytorch==1.0.2
 pywsd
 allennlp
-hypothesis==3.6.1
 numpy==1.16.1
-opencv-python==3.2.0.6
 pandas==0.19.2
 pytest==3.0.6
 openpyxl
@@ -30,7 +28,6 @@ kivy
 regex
 Cython
 more_itertools
-pandas
 gensim
 nltk
 pyLDAvis
