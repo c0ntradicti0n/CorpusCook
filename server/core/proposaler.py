@@ -39,6 +39,17 @@ def approx_unique(urn=[], choices=[], variance=0.005):
 
 
 class Proposaler:
+    """ Splits texts based on the states of made annotations.
+
+        Longer must be split into smaller annotable pieces. 
+
+        It handles two models. It steps through the text and makes predictions, where it takes the first
+        annotation. The corpus for this model must be trained to take the first possible annotation set. 
+        If something ist found, then the text of the intermediate parts of the annotation is feeded into
+        the second model. The second model is to be trained to annotate the whole sample and this is done
+        until nothing reasobable is found any more.   
+         
+    """
     def __init__(self, model_first, model_over, max_len = 100):
 
         self.model_first = model_first
@@ -133,7 +144,10 @@ class Proposaler:
         relevant_tags =  [x != "O" for x in tags]
         beginning_tags =  [x for x in tags if x[0] == 'B']
 
-        number_of_annotations = [t[0] for t in tags].count('B')
+        BIO_tokens = [t[0] for t in tags]
+        number_of_annotations = BIO_tokens.count('B')
+        number_of_subjects    = BIO_tokens.count('S')
+
 
         annotation_groups = list(split_before(zip(indices, tags), lambda x: x[1][0] == 'B'))
 
@@ -152,6 +166,7 @@ class Proposaler:
                 # positions of group starts until end
                 middles = set([sentence_cuts[Proposaler.nearest(b[0][0], sentence_cuts, before=True)] for b in annotation_groups] +
                               [indices[-1]+2])
+                print (middles)
                 # approximate closest sentence borders before each annotation
                 # make new predictions for sides of distinctions
                 subs = [
@@ -168,6 +183,7 @@ class Proposaler:
 
                 mark_end = max([mark_end, *[s['mark_end'] for s in subs]])
 
+        privative = number_of_annotations>=2 and number_of_subjects >=2
         return {
             'annotation': annotation,
             'indices': indices,
@@ -179,6 +195,7 @@ class Proposaler:
             'mark_end': mark_end,
             'annotated': any(relevant_tags),
             'difference': number_of_annotations >=2 ,
+            'privative': privative,
             'subs': subs
         }
 
