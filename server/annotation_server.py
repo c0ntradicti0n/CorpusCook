@@ -10,6 +10,7 @@ from core.corpus import Corpus
 #import spacy_embedder.spacy_embedder
 #from allennlp.predictors.sentence_tagger import SentenceTaggerPredictor as Predictor
 import customCrfTagger.cCrfT
+from server.core.annotation_protocol import Ping
 
 sampler = Sampler(sample_file='samples/server_samples_bin.txt')
 difference_pages = None #WebPageParser(path_to_htmls='../scraping/data')
@@ -107,6 +108,7 @@ class AnnotationCloud(amp.AMP):
 
     @Ping.responder
     def ping(self, text):
+        print ("ping received!")
         return {'done': 'yes'}
 
 
