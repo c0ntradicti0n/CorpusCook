@@ -74,6 +74,9 @@ class ZeroAnnotation(amp.Command):
     arguments = [(b'annotation', JSON()), (b'which', amp.Unicode())]
     response =  [(b'done', amp.Unicode())]
 
+class Ping(amp.Command):
+    arguments = [(b'text', amp.Unicode())]
+    response =  [(b'done', amp.Unicode())]
 
 
 
