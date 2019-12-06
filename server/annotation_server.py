@@ -105,6 +105,11 @@ class AnnotationCloud(amp.AMP):
             # TODO
             #  pages store empty: err callback to lead to generating more pages
 
+    @Ping.responder
+    def ping(self, text):
+        return {'done': 'yes'}
+
+
 def main():
     from twisted.internet import reactor
     from twisted.internet.protocol import Factory
