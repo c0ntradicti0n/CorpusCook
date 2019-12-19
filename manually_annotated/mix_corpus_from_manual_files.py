@@ -87,8 +87,9 @@ if short_dummy:
     set_copy = ['train', 'valid', 'test']
 
 def mix_files():
-    path = manual_samples_dir + "/topics/**/{model}.conll3"
     for model in models:
+        path = manual_samples_dir + "/topics/**/{model}.conll3"
+
         print (path.format(model=model))
         relevant_files_paths = list(get_files_from_recursive_path(path.format(model=model)))
         pprint (relevant_files_paths)
@@ -99,6 +100,7 @@ def mix_files():
         all_samples = limit_length(all_samples)
         random.shuffle(all_samples)
 
+        print (model)
         print ("maximal len is %s" % max([len(s.split('\n')) for s in all_samples]))
 
         # splitting
