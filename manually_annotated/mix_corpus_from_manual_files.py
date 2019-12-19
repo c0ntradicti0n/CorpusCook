@@ -87,8 +87,10 @@ if short_dummy:
     set_copy = ['train', 'valid', 'test']
 
 def mix_files():
+    path = manual_samples_dir + "/topics/**/{model}.conll3"
     for model in models:
-        relevant_files_paths = list(get_files_from_recursive_path(manual_samples_dir + "topics/**/{model}.conll3".format(model=model)))
+        print (path.format(model=model))
+        relevant_files_paths = list(get_files_from_recursive_path(path.format(model=model)))
         pprint (relevant_files_paths)
 
         # filtering, changing samples
