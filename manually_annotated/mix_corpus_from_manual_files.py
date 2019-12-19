@@ -11,7 +11,15 @@ from helpers.os_tools import get_files_from_recursive_path
 
 from numpy import cumsum
 
-manual_samples_dir = "./manually_annotated/"
+from argparse import ArgumentParser
+parser = ArgumentParser(description='Mixing the corpus to train/test/valid conll3s.')
+parser.add_argument('dir', type=str, help='directory to process the files recursively from single commited conll3s')
+args = parser.parse_args()
+
+if not args.dir: 
+    manual_samples_dir = "./manually_annotatad"
+else:
+    manual_samples_dir = args.dir
 
 def percentage_split(seq, percentages):
     cdf = cumsum(percentages)
