@@ -1,0 +1,1 @@
+cp manually_annotated/*.conll3 ../Distinctiopus4/manual_corpus/
