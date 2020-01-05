@@ -2,24 +2,18 @@ import os
 import random
 from collections import Counter
 from pprint import pprint
-
 import regex as re
 from nltk import flatten
-
 from helpers.os_tools import get_files_from_recursive_path
-
-
 from numpy import cumsum
-
 from argparse import ArgumentParser
-parser = ArgumentParser(description='Mixing the corpus to train/test/valid conll3s.')
-parser.add_argument('dir', type=str, help='directory to process the files recursively from single commited conll3s')
-args = parser.parse_args()
 
-if not args.dir: 
-    manual_samples_dir = "./manually_annotatad"
-else:
-    manual_samples_dir = args.dir
+parser = ArgumentParser(description='Mixing the corpus to train/test/valid conll3s.')
+parser.add_argument('dir',
+                    type=str,
+                    help='directory to process the files recursively from single commited conll3s',
+                    default= "./manually_annotated")
+args = parser.parse_args()
 
 def percentage_split(seq, percentages):
     cdf = cumsum(percentages)
@@ -67,7 +61,6 @@ def write_conll_file (path, samples):
 set_layout = {'train':0.8,
               'test':0.2}
 
-
 def zeroize(sample):
     return "\n".join([re.sub(conll_line, r"\1  \2  O  O", line) for line in sample.split('\n')])
 
@@ -88,7 +81,7 @@ if short_dummy:
 
 def mix_files():
     for model in models:
-        path = manual_samples_dir + "/topics/**/{model}.conll3"
+        path = args.dir + "/topics/**/{model}.conll3"
 
         print (path.format(model=model))
         relevant_files_paths = list(get_files_from_recursive_path(path.format(model=model)))
@@ -107,15 +100,15 @@ def mix_files():
         tvt = percentage_split(all_samples, list(set_layout.values()))
         names = list(set_layout.keys())
         for name, samples in zip (names, tvt):
-            path = manual_samples_dir + name + "_" + model +'.conll3x'
+            path = args.dir + name + "_" + model +'.conll3x'
             print ("%s-set contains %d samples" %(name, len(samples)) )
             write_conll_file(path, samples)
             sanitize_conll(path)
             os.remove(path)
             if short_dummy:
                 for cp in set_copy[1:]:
-                    tr_path = manual_samples_dir + name + "_" + model + '.conll3'
-                    cp_path = manual_samples_dir + cp + "_" + model + '.conll3'
+                    tr_path = args.dir + name + "_" + model + '.conll3'
+                    cp_path = args.dir + cp + "_" + model + '.conll3'
 
                     os.system("cp {path} {cp_path}".format(path=tr_path, cp_path=cp_path))
 
@@ -123,7 +116,7 @@ def mix_files():
 mix_files()
 
 for model in models:
-    with open (manual_samples_dir +"train_" + model +".conll3") as f:
+    with open (args.dir +"train_" + model +".conll3") as f:
         t = f.read()
         all_chars = Counter(t)
         print("".join(sorted(set(all_chars.keys()))))
