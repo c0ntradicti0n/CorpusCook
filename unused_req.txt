@@ -1,0 +1,27 @@
+pytesseract
+pdftabextract
+pywsd
+
+pytest==3.0.6
+openpyxl
+addict
+python-Levenshtein
+# tesserocr
+autocorrect
+parsley
+pyrata
+bert_embedding
+fuzzywuzzy
+scrapy
+wmd
+spacy-nightly
+
+beautifultable
+
+bs4
+kivy
+
+gensim
+nltk
+pyLDAvis
+more-itertools
