@@ -7,7 +7,6 @@ import os
 
 #from allennlp.data.tokenizers.spacy_tokenizer import SpacyTokenizer
 from allennlp.data.tokenizers.spacy_tokenizer import SpacyTokenizer
-from allennlp.data.tokenizers.word_splitter import WhitespaceTokenizer, JustSpacesWordSplitter
 from regex import regex as re
 from helpers.list_tools import threewise
 from server.core.allennlp_predictor import SentenceTaggerPredictor as Predictor
