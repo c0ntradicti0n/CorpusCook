@@ -3,7 +3,7 @@
 *.json
 ./venv
 .gz
-
+.idea
 server/core/ai_models/others_models
 grammer_text_fit/output
 grammer_text_fit/tagml
