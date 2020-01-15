@@ -1,7 +1,7 @@
 from typing import List, Dict
 from copy import deepcopy
 
-from allennlp.data.tokenizers.spacy_tokenizer import SpacyTokenizer
+from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 from overrides import overrides
 import numpy
 
@@ -26,7 +26,7 @@ class SentenceTaggerPredictor(Predictor):
         self, model: Model, dataset_reader: DatasetReader, language: str = "en_core_web_sm"
     ) -> None:
         super().__init__(model, dataset_reader)
-        self._tokenizer = SpacyTokenizer(language=language) #, pos_tags=True, split_on_spaces=True)
+        self._tokenizer = SpacyWordSplitter(split_on_spaces=True) #, pos_tags=True, split_on_spaces=True)
 
     def predict_sentence(self, sentence) -> JsonDict:
         return self.predict_json({"sentence": sentence})
