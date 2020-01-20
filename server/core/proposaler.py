@@ -112,7 +112,7 @@ class Proposaler:
         reasonable_samples = (self.get_sample_if_reasonable(r) for r in windows)
         return [r for r in reasonable_samples if r]
 
-    def get_sample(self, start_i, end_i, sentence_span,  sentence_cuts, depth = 0, max_depth = 2, which='first'):
+    def get_sample(self, start_i, end_i, sentence_span,  sentence_cuts, depth = 0, max_depth = 1, which='first'):
         """ make the prediction based on some parts of the text, optionally regarding also distinctions, that appear
         within the sides or arms of a found distinction
 
