@@ -77,7 +77,9 @@ class Proposaler:
                 print ("repeating work, why?")
                 start_i =  end_i
                 end_i = start_i + 5
-            result = self.get_sample(start_i, end_i, self.doc[span[0]:span[1]], sent_cuts)
+            result = self.get_sample(
+                start_i,
+                end_i, self.doc[span[0]:span[1]], sent_cuts)
             done.append(span)
 
             last_start_i, last_end_i = start_i, end_i
