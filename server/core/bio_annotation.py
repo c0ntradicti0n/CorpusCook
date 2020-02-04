@@ -55,10 +55,10 @@ class BIO_Annotation:
 
         assert (all(sd in ['B', 'I', 'O'] for sd in span_delims))
         count = Counter(span_delims)
-        if not count['B'] == 2:
+        if not count['B'] >= 2:
             logging.error('Annotation contains wrong number of spanning tags!!! %s' % str(count))
             return None
-        assert count['B'] == 2
+        assert count['B'] >= 2
 
         return conll_lines
 
