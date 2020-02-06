@@ -50,21 +50,18 @@ class Proposaler:
         until nothing reasobable is found any more.   
          
     """
-    def __init__(self, model_first, model_over, max_len = 100):
-
+    def __init__(self, model_first, model_over, multi_model=False,  max_len = 100):
         self.model_first = model_first
-        self.model_second = model_over
+        #self.model_second = model_over
         self.max_len = max_len
         self.annotation_scheme = bio_annotation
-
+        self.multi_model = multi_model
         self.id_source = next_natural_number()
+
         next(self.id_source)
-
-
 
     def make_proposals(self, text):
         text =  self.model_first.clean(text)
-
         self.doc  = nlp(text)
         sent_cuts = [sp.start for sp in self.doc.sents]
         print (sent_cuts)
@@ -162,7 +159,7 @@ class Proposaler:
             mark_end = len(tokens)
 
 
-        if True in relevant_tags and depth < max_depth:
+        if self.multi_model and True in relevant_tags and depth < max_depth:
 
             if number_of_annotations>=2:
                 # positions of group starts until end
