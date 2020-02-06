@@ -19,9 +19,9 @@ corpus_over = Corpus(path='server/corpus/over.conll3')
 
 
 model_first = Model(model_path="server/models/model_first.tar.gz")
-model_over =  Model(model_path="server/models/model_over.tar.gz")
-proposaler = Proposaler(model_first, model_over)
-
+#model_over =  Model(model_path="server/models/model_over.tar.gz")
+#proposaler = Proposaler(model_first, model_over)
+proposaler = Proposaler(model_first, None)
 
 import pprint
 from helpers.color_logger import *
@@ -94,7 +94,7 @@ class AnnotationCloud(amp.AMP):
 
 
 
-
+    """
     @DeliverPage.responder
     def deliverpage(self):
         while True:
@@ -104,7 +104,8 @@ class AnnotationCloud(amp.AMP):
                 raise FileNotFoundError(
                     "No pages anymore")
             # TODO
-            #  pages store empty: err callback to lead to generating more pages
+            #  pages store empty: error callback to lead to generating more pages
+    """
 
     @Ping.responder
     def ping(self, text):
