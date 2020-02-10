@@ -73,11 +73,13 @@ def limit_length(samples):
     return [s for s in samples if len(s.split('\n')) < 210]
 
 models  =  ['first', 'over']
-short_dummy = True;
+short_dummy = False;
 copy = []
 if short_dummy:
     set_layout = {'train': 1}
     set_copy = ['train', 'valid', 'test']
+
+
 
 def mix_files():
     for model in models:
