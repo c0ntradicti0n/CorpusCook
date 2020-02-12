@@ -1,10 +1,8 @@
 from typing import List, Dict
 from copy import deepcopy
-
 from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 from overrides import overrides
 import numpy
-
 from allennlp.common.util import JsonDict
 from allennlp.data import DatasetReader, Instance
 from allennlp.data.fields import TextField, SequenceLabelField

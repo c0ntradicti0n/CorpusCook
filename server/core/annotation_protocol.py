@@ -54,9 +54,8 @@ class MakePrediction(amp.Command):
     response = [(b'annotation', JSON())]
 
 class MakeProposals(amp.Command):
-    arguments = [(b'text', amp.Unicode())]
+    arguments = [(b'text', amp.Unicode()), (b'text_name', amp.Unicode())]
     response = [(b'proposals', JSONB64COMPRESS())]
-
 
 class SaveAnnotation(amp.Command):
     arguments = [(b'annotation', JSON()), (b'which', amp.Unicode())]
