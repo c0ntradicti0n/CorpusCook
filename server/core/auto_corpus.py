@@ -1,3 +1,4 @@
+import unittest
 from pprint import pformat
 
 from allennlp.common.checks import ConfigurationError
@@ -28,13 +29,14 @@ class AutoCorpus:
     def compare_and_notate(self, document_name, proposals):
         yet_seen = []
         for proposal in proposals:
-            contained_proposals = [proposal for annotation in self.all_annotations if AutoCorpus.contains(proposal, annotation, yet_seen)]
-            self.write(document_name, contained_proposals)
+            contained_proposals = [(proposal, annotation) for annotation in self.all_annotations if AutoCorpus.contains(proposal, annotation, yet_seen)]
+            transposed_proposals = [self.transpose_annotation_to_proposal(*cp) for cp in contained_proposals]
+            self.write(document_name, transposed_proposals)
 
     def contains(proposal, annotation, yet_seen):
        proposal_text = proposal['text']
        annotation_text = " ".join(an[0].text for an in annotation)
-       res = fuzz.partial_ratio( annotation_text, proposal_text)>0.4
+       res = annotation_text in proposal_text #fuzz.partial_ratio( annotation_text, proposal_text)>0.4
        if proposal['id'] not in yet_seen and res:
            yet_seen.append(proposal['id'])
            return res
@@ -75,6 +77,18 @@ class AutoCorpus:
                             f2.write(l)
                         else:
                             f2.write(l)
+
+    def transpose_annotation_to_proposal(self, param):
+        raise NotImplementedError
+
+
+class TestStringMethods(unittest.TestCase):
+    def test_transpose(self):
+
+        raise NotImplementedError
+
+if __name__ == '__main__':
+    unittest.main()
 
 
 
