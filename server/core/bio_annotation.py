@@ -1,5 +1,4 @@
 import pprint
-
 import regex as re
 import itertools
 import more_itertools
@@ -207,7 +206,6 @@ class BIO_Annotation:
 
     def is_nl_text(text):
         return re.sub(r"""[\s\d.!?\\\-;:'"\[\]{}()=+_@#$%\^&*`~\/<>|]""", '', text)
-
 
     def compute_structured_spans(annotations):
         # Divide by 'B'eginning tags

@@ -1,30 +1,32 @@
 import itertools
 from collections import Counter
+import random
 from typing import Dict, List, Any
-from helpers.color_logger import *
 
+from allennlp.data.dataset_readers import Conll2003DatasetReader
+
+from helpers.color_logger import *
 import more_itertools
 import spacy
 import regex as re
 from nltk import flatten
 
 nlp = spacy.load("en_core_sci_sm")
+START_LINE = "-DOCSTART- -X- -X- O\n\n"
+CONLL_LINE           = re.compile(r"([^\s]+)  ([^\s]+)  ([^\s]+)  ([^\s]+)")
+CONLL_LINE_SANITIZE = re.compile(r"([^\s]*)  ([^\s]*)  ([^\s]+)  ([^\s]+)")
+ABC_ONLY = re.compile('[^a-zA-Z0-9]|_')
+DOTS = re.compile('[,\.;:?!]')
+ALLOWED_CHARS =  sorted(""" !?$%&()+,-./0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_`abcdefghijklmnopqrstuvwxyz‘’“”""")
 
-conll_line = re.compile(r"([^\s]+)  ([^\s]+)  ([^\s]+)  ([^\s]+)")
-
-only_abc = re.compile('[^a-zA-Z0-9]|_')
+conll_reader = Conll2003DatasetReader(lazy=False, coding_scheme="IOB1")
 
 
 def re_replace_abc(string):
-    return re.sub(only_abc, '', string)
-
-
-dots = re.compile('[,\.;:?!]')
-
+    return re.sub(ABC_ONLY, '', string)
 
 def re_replace_dot(string):
-    return re.sub(dots, 'PCT', string)
-
+    return re.sub(DOTS, 'PCT', string)
 
 def ranges(nums):
     nums = sorted(set(nums))
@@ -37,7 +39,19 @@ class Corpus:
     def __init__(self, path):
         self.path = path
         with open(self.path, 'w+') as f:
+            f.write(START_LINE)
+
+    def read_conll_file(path):
+        with open(path, 'r') as f:
+            all_lines = f.read()
+        splitted = all_lines.split(sep='\n\n')
+        random.shuffle(splitted[1:])
+        return splitted[1:]
+
+    def write_conll_file(path, all_samples):
+        with open(path, 'w+') as f:
             f.write("-DOCSTART- -X- -X- O\n\n")
+            f.write("\n\n".join(all_samples))
 
     def write_annotation(self, annotation, **kwargs):
         """
@@ -92,7 +106,7 @@ class Corpus:
                 line = "  ".join([token, pos, pos_tag, tag])
             except TypeError:
                 raise
-            if not conll_line.match(line):
+            if not CONLL_LINE.match(line):
                 raise ValueError("%s doesn't fit conll3 format" % line)
             conll_lines.append(line)
 
