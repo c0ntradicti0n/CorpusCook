@@ -2,7 +2,6 @@ import os
 import random
 from glob import iglob
 from pathlib import Path
-
 from bs4 import BeautifulSoup
 from lxml.html.clean import Cleaner
 

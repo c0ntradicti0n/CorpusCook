@@ -4,7 +4,6 @@ import itertools
 import logging
 import operator
 import os
-
 from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 from regex import regex as re
 from helpers.list_tools import threewise
