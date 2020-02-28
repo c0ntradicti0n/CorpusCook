@@ -58,6 +58,20 @@ class AnnotationCloud(amp.AMP):
         self.log_before_after('MakeProposals', text, proposals)
         return {'proposals': proposals}
 
+    @MakeProposalsIndexed.responder
+    def makeproposalsindexed(self, indexed, text_name):
+        auto_corpus = AutoCorpus(source_corpora=
+                                 ['server/corpus/first.conll3',
+                                  'manually_annotated/train_first.conll3',
+                                  'manually_annotated/test_first.conll3',
+                                  'manually_annotated/valid_first.conll3'],
+                                 target_corpus=corpus_auto_first)
+        proposals = list(proposaler.make_proposals(indexed))
+
+        auto_corpus.compare_and_notate(text_name, proposals)
+        self.log_before_after('MakeProposals', indexed, proposals)
+        return {'proposals': proposals}
+
     @ChangeProposals.responder
     def changeproposals(self, cuts, indices, delete_add):
         proposals = proposaler.change_proposals(cuts, indices)

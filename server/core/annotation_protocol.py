@@ -44,6 +44,10 @@ class DeliverSample(amp.Command):
     arguments = []
     response = [(b'text', amp.Unicode())]
 
+class MakeProposalsIndexed(amp.Command):
+    arguments = [(b'indexed',  JSONB64COMPRESS()), (b'text_name', amp.Unicode())]
+    response = [(b'proposals', JSONB64COMPRESS())]
+
 
 class ChangeProposals(amp.Command):
     arguments = [(b'cuts', JSONB64COMPRESS()), (b'indices', JSONB64COMPRESS()), (b'delete_add', JSONB64COMPRESS())]

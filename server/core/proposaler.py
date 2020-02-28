@@ -60,9 +60,9 @@ class Proposaler:
 
         next(self.id_source)
 
-    def make_proposals(self, text):
-        text =  self.model_first.clean(text)
-        self.doc  = nlp(text)
+    def make_proposals(self, tokens):
+        #text =  self.model_first.clean(text)
+        self.doc  = nlp(" ".join(tokens))
         sent_cuts = [sp.start for sp in self.doc.sents]
         print (sent_cuts)
         start_i, end_i = self.next_proposal(self.doc, sent_cuts, start_i=0)

@@ -9,4 +9,4 @@ regex
 Cython
 more_itertools
 twisted
-
+fuzzywuzzy
