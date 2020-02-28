@@ -57,7 +57,6 @@ class Proposaler:
         self.annotation_scheme = bio_annotation
         self.multi_model = multi_model
         self.id_source = next_natural_number()
-
         next(self.id_source)
 
     def make_proposals(self, tokens):
