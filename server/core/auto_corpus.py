@@ -1,4 +1,6 @@
 import unittest
+from pprint import pformat
+
 from allennlp.common.checks import ConfigurationError
 from helpers.color_logger import *
 from regex import regex
@@ -18,7 +20,7 @@ class AutoCorpus:
                 logging.info("nonexisting or empty conll file" + path)
 
         self.all_annotations = [list(zip(instance.fields['tokens'], instance.fields['tags'])) for instance in instances]
-        logging.info(pformat(self.all_annotations[:3], indent=4))
+        logging.info(self.all_annotations[:3])
 
     def compare_and_notate(self, document_name, proposals):
         yet_seen = []

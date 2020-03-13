@@ -40,17 +40,17 @@ class AnnotationCloud(amp.AMP):
 
     @MakeProposals.responder
     def makeproposals(self, text, text_name):
-        auto_corpus = AutoCorpus(source_corpora=
-                                 ['server/corpus/first.conll3',
-                                  'manually_annotated/train_first.conll3',
-                                  'manually_annotated/test_first.conll3',
-                                  'manually_annotated/valid_first.conll3'],
-                                 target_corpus=corpus_auto_first)
+        #auto_corpus = AutoCorpus(source_corpora=
+        #                         ['server/corpus/first.conll3',
+        #                          'manually_annotated/train_first.conll3',
+        #                          'manually_annotated/test_first.conll3',
+        #                          'manually_annotated/valid_first.conll3'],
+        #                         target_corpus=corpus_auto_first)
         if not text:
             text = difference_pages.next_text()
         proposals = list(proposaler.make_proposals(text))
 
-        auto_corpus.compare_and_notate(text_name, proposals)
+        #auto_corpus.compare_and_notate(text_name, proposals)
         self.log_before_after('MakeProposals', text, proposals)
         return {'proposals': proposals}
 
