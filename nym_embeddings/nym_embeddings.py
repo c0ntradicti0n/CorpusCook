@@ -62,6 +62,6 @@ class NymEmbedder (TokenEmbedder):
 
     @overrides
     def get_output_dim(self) -> int:
-        print (self.model.k * 2)
+        #print (self.model.k * 2)
         return self.model.k
 

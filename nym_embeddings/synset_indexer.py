@@ -1,11 +1,8 @@
 import logging
 from collections import OrderedDict
-from pprint import pprint
 from typing import Dict, List
-
 from overrides import overrides
 import torch
-
 from allennlp.common.util import pad_sequence_to_length
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.data.tokenizers.token import Token
@@ -54,11 +51,6 @@ class SynsetIndexer(TokenIndexer[str]):
         desired_num_tokens: Dict[str, int],
         padding_lengths: Dict[str, int],
     ) -> Dict[str, torch.Tensor]:
-        """pprint(padding_lengths)
-        pprint ({
-            key: torch.IntTensor(pad_sequence_to_length(val, desired_num_tokens[key])).shape
-            for key, val in tokens.items()
-        })"""
         return {
             key: torch.IntTensor(pad_sequence_to_length(val, desired_num_tokens[key]))
             for key, val in tokens.items()

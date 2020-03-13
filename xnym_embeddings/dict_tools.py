@@ -61,14 +61,13 @@ class TestDicTools(unittest.TestCase):
 
 
     def test_balance_complex_tuple_dict(self):
-        import pprint
         d = {
-            ('differ'):['equal'],
+            ('differ', 'in'):['equal'],
             ('have','*','in', 'common'):[('differ','in'), 'differ', 'derive']
         }
         balanced = balance_complex_tuple_dict(dict(d))
 
-        print (balanced)
+        assert (balanced(balanced(d))==d)
 
 
 if __name__ == '__main__':

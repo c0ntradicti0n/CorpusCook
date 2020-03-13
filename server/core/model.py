@@ -34,7 +34,7 @@ class Model:
 
     def predict_sentence(self, sentence: str):
         sentence = self.clean(sentence)
-        print ("SENTENCE", sentence)
+        logging.info(f"SENTENCE {sentence}")
         hash = pickle.dumps(sentence)
         path = "cache/predictions/" + hashlib.md5(str(hash).encode('utf-8')).hexdigest() + ".dump"
         if os.path.isfile(str(path)):

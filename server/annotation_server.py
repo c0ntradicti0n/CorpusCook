@@ -19,16 +19,12 @@ model_first = Model(model_path="server/models/model_first.tar.gz")
 #proposaler = Proposaler(model_first, model_over)
 proposaler = Proposaler(model_first, None)
 
-
-import pprint
 from helpers.color_logger import *
 
 class AnnotationCloud(amp.AMP):
     def log_before_after(self, what, before, after):
         logging.info(what)
-        logging.info(pprint.pformat(before)[:100]+" ...")
-        logging.info('-->')
-        logging.info(pprint.pformat(after)[:100]+" ...")
+        logging.info(f"{before[:100]} ... -->{after[:100]} ...")
 
     @MakePrediction.responder
     def makeprediction(self, text):
@@ -128,7 +124,7 @@ class AnnotationCloud(amp.AMP):
 
     @Ping.responder
     def ping(self, text):
-        print ("ping received!")
+        logging.info("ping received!")
         return {'done': 'yes'}
 
 

@@ -45,11 +45,9 @@ def mix_files():
 
         print (path.format(model=model))
         relevant_files_paths = list(get_files_from_recursive_path(path.format(model=model)))
-        pprint (relevant_files_paths)
 
         # filtering, changing samples
         all_samples = list(flatten([Corpus.read_conll_file(path) for path in relevant_files_paths]))
-        #all_samples = add_only_first_of_pair(all_samples, 0.1)
         all_samples = AutoCorpus.limit_length(all_samples)
         random.shuffle(all_samples)
 

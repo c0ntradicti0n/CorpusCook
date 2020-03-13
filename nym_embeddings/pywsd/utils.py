@@ -154,6 +154,3 @@ def has_synset(word: str) -> list:
 
     return wn.synsets(lemmatize(word, neverstem=True))
 
-# To check default parameters of simple_lesk()
-## a = inspect.getargspec(simple_lesk)
-## print zip(a.args[-len(a.defaults):],a.defaults)

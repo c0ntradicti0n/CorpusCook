@@ -1,9 +1,6 @@
 import itertools
-import pprint
-import sys
 from collections import OrderedDict, Iterable
 from functools import wraps
-from itertools import cycle
 
 from nltk import flatten
 from nltk.corpus import wordnet
@@ -241,9 +238,6 @@ class XnymEmbedder (TokenEmbedder):
             if numerize_dict:
                 self.xnym_dict = numerize(self.xnym_dict, vocab.get_token_to_index_vocabulary())
 
-            #pprint.pprint (dict(zip(list(self.xnym_dict.keys())[:take],list(self.xnym_dict.values())[:take])))
-
-
             self.normalize = normalize
             self.sparse = sparse
             self.output_dim = projection_dim
@@ -325,16 +319,12 @@ class XnymEmbedder (TokenEmbedder):
             with timeit_context('%s-position calculation...' % self.xnyms):
                 self.position_distance_embeddings(input_array)
 
-        #print ( [self.vocab.get_index_to_token_vocabulary()[i] for i in input_array[0]])
-
         transformer = Normalizer(norm='l2').fit(self.S.reshape(-1, self.S.shape[-1]))  # fit does nothing.
         tS = transformer.transform(self.S.reshape(-1, self.S.shape[-1] )).reshape(*self.S.shape)
         tS = np.sort(tS, axis=0)
-        #print ('%s-position calculation...' % self.xnyms, tS[0])
         tensor = torch.from_numpy(tS)
 
-        #np.set_printoptions(threshold=sys.maxsize)
-        #pprint.pprint (tS)
+
         return tensor
 
     @overrides

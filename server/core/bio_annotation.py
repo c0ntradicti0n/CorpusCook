@@ -1,4 +1,3 @@
-import pprint
 import regex as re
 import itertools
 import more_itertools
@@ -68,7 +67,7 @@ class BIO_Annotation:
             return False
         for side in spans:
             if len(side)<=2:
-                logging.info('not enough things in span %s' % pprint.pformat(spans, indent=4))
+                logging.info(f"not enough things in span {str(spans)}")
                 return False
             kinds = [ann[0] for ann in side]
             kind_counts = Counter(kinds)
@@ -292,7 +291,6 @@ class BIO_Annotation:
                         these_tags[i] = "-".join(['B' if i == beginning else 'I', d['kind']])
                 all_tags = [x + [y] for x, y in zip(all_tags, these_tags)]
 
-        print ('ALL TAGS', all_tags)
         tags = [max(row_tags, key=lambda x: - BIO_Annotation.importance_list.index(x[2:]))
                 for row_tags in all_tags]
 

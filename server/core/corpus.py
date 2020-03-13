@@ -328,7 +328,6 @@ class Corpus:
                         these_tags[i] = "-".join(['B' if i == beginning else 'I', d['kind']])
                 all_tags = [x + [y] for x, y in zip(all_tags, these_tags)]
 
-        print ('ALL TAGS', all_tags)
         tags = [max(row_tags, key=lambda x: -self.importance_list.index(x[2:]))
                 for row_tags in all_tags]
 

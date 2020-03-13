@@ -63,14 +63,13 @@ class Proposaler:
         #text =  self.model_first.clean(text)
         self.doc  = nlp(" ".join(tokens))
         sent_cuts = [sp.start for sp in self.doc.sents]
-        print (sent_cuts)
         start_i, end_i = self.next_proposal(self.doc, sent_cuts, start_i=0)
 
         done = []
         while start_i != end_i:
             span = sent_cuts[start_i],sent_cuts[end_i]
             if span in done:
-                print ("repeating work, why?")
+                logging.info("repeating work, why?")
                 start_i =  end_i
                 end_i = start_i + 5
             result = self.get_sample(
@@ -86,7 +85,7 @@ class Proposaler:
             start_i = start_i if new_start_i == start_i else new_start_i
             start_i, end_i = self.next_proposal(self.doc, sent_cuts, start_i)
             if start_i < last_end_i:
-                print ("starting at tokens before")
+                logging.info("starting at tokens before")
 
     def next_proposal (self, whole_doc, whole_sent_starts, start_i):
         """ Effectively this functions computes the new end of the span, that fits in the window of text to be analysed
@@ -149,7 +148,6 @@ class Proposaler:
 
         annotation_groups = list(split_before(zip(indices, tags), lambda x: x[1][0] == 'B'))
 
-        pprint (annotation_groups)
         subs = []
         if True in relevant_tags:
             # global position of span end of annotation
@@ -162,9 +160,7 @@ class Proposaler:
 
             if number_of_annotations>=2:
                 # positions of group starts until end
-                middles = set([sentence_cuts[Proposaler.nearest(b[0][0], sentence_cuts, before=True)] for b in annotation_groups] +
-                              [indices[-1]+2])
-                print (middles)
+
                 # approximate closest sentence borders before each annotation
                 # make new predictions for sides of distinctions
                 subs = [

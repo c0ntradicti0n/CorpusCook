@@ -1,15 +1,9 @@
 import unittest
-from pprint import pformat
-
 from allennlp.common.checks import ConfigurationError
-
 from helpers.color_logger import *
-from nltk.corpus import ConllCorpusReader
 from regex import regex
-from server.core.bio_annotation import BIO_Annotation
 from server.core.corpus import CONLL_LINE, CONLL_LINE_SANITIZE, START_LINE, ALLOWED_CHARS, conll_reader
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+
 
 class AutoCorpus:
     """ This class contains functions for automatic manipulation of the corpus.
@@ -73,7 +67,6 @@ class AutoCorpus:
                                 continue
 
                             l = "  ".join([token, pos, tag_wod, tag_annot]) + "\n"
-                            print(l)
                             f2.write(l)
                         else:
                             f2.write(l)
