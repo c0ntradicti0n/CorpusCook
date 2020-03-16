@@ -38,16 +38,16 @@ def approx_unique(urn=[], choices=[], variance=0.005):
             yield i, v
 
 
-class Proposaler:
+class TextSplitter:
     """ Splits texts based on the states of made annotations.
 
         Longer must be split into smaller annotable pieces. 
 
         It handles two models. It steps through the text and makes predictions, where it takes the first
         annotation. The corpus for this model must be trained to take the first possible annotation set. 
-        If something ist found, then the text of the intermediate parts of the annotation is feeded into
+        If something ist found, then the text of the intermediate parts of the annotation is fed into
         the second model. The second model is to be trained to annotate the whole sample and this is done
-        until nothing reasobable is found any more.   
+        until nothing reasonable is found any more.
          
     """
     def __init__(self, model_first, model_over, multi_model=False,  max_len = 100):
@@ -60,10 +60,9 @@ class Proposaler:
         next(self.id_source)
 
     def make_proposals(self, tokens):
-        #text =  self.model_first.clean(text)
-        self.doc  = nlp(" ".join(tokens))
-        sent_cuts = [sp.start for sp in self.doc.sents]
-        start_i, end_i = self.next_proposal(self.doc, sent_cuts, start_i=0)
+        sent_cuts = [i+1 for i, token in  enumerate(tokens)
+                     if token=="." or token=="?" or token=="!"]
+        start_i, end_i = self.next_proposal(tokens, sent_cuts, start_i=0)
 
         done = []
         while start_i != end_i:
@@ -72,9 +71,12 @@ class Proposaler:
                 logging.info("repeating work, why?")
                 start_i =  end_i
                 end_i = start_i + 5
+
             result = self.get_sample(
-                start_i,
-                end_i, self.doc[span[0]:span[1]], sent_cuts)
+                    start=span[0],
+                    end=span[1],
+                    tokens=tokens[span[0]:span[1]],
+                    sentence_cuts=sent_cuts)
             done.append(span)
 
             last_start_i, last_end_i = start_i, end_i
@@ -83,7 +85,7 @@ class Proposaler:
             next_position = min(sent_cuts, key=lambda x: abs(last_mark - x))
             new_start_i = sent_cuts.index(next_position)
             start_i = start_i if new_start_i == start_i else new_start_i
-            start_i, end_i = self.next_proposal(self.doc, sent_cuts, start_i)
+            start_i, end_i = self.next_proposal(tokens, sent_cuts, start_i)
             if start_i < last_end_i:
                 logging.info("starting at tokens before")
 
@@ -109,21 +111,22 @@ class Proposaler:
         reasonable_samples = (self.get_sample_if_reasonable(r) for r in windows)
         return [r for r in reasonable_samples if r]
 
-    def get_sample(self, start_i, end_i, sentence_span,  sentence_cuts, depth = 0, max_depth = 1, which='first'):
+    def get_sample(self, start, end, tokens, sentence_cuts, depth = 0, max_depth = 1, which='first'):
         """ make the prediction based on some parts of the text, optionally regarding also distinctions, that appear
         within the sides or arms of a found distinction
 
-        :param start_i:
-        :param end_i:
-        :param sentence_span:
+        :param start:
+        :param end:
+        :param tokens:
         :param sentence_cuts:
         :param depth:
         :param max_depth:
         :return:
         """
-        text = " ".join([t.text for t in sentence_span])
-        indices = [t.i for t in sentence_span]
-        if not text:
+        indices = list(range(start, end))
+        assert len (indices) == len(tokens)
+        assert len(tokens) == end-start
+        if not tokens:
             logging.error(ValueError("no text in given span").__repr__())
             return {'difference':False}
 
@@ -132,65 +135,34 @@ class Proposaler:
         else:
             model = self.model_second
 
-
-        text =  model.clean(text)
-        annotation = model.predict_sentence(text)
+        annotation = model.predict_tokens(tokens)
 
         tokens = [x[0] for x in annotation]
         tags = [x[1] for x in annotation]
         relevant_tags =  [x != "O" for x in tags]
-        beginning_tags =  [x for x in tags if x[0] == 'B']
-
         BIO_tokens = [t[0] for t in tags]
+
         number_of_annotations = BIO_tokens.count('B')
         number_of_subjects    = BIO_tokens.count('S')
 
-
-        annotation_groups = list(split_before(zip(indices, tags), lambda x: x[1][0] == 'B'))
-
-        subs = []
         if True in relevant_tags:
             # global position of span end of annotation
             mark_end = len(relevant_tags) - relevant_tags[::-1].index(True)  # last tags (look backwards and index first True and thats the position from the end
         else:
             mark_end = len(tokens)
 
-
-        if self.multi_model and True in relevant_tags and depth < max_depth:
-
-            if number_of_annotations>=2:
-                # positions of group starts until end
-
-                # approximate closest sentence borders before each annotation
-                # make new predictions for sides of distinctions
-                subs = [
-                        self.get_sample(
-                            start_i       = group[0][0],
-                            end_i         = group[-1][0],
-                            sentence_span = self.doc[group[0][0]: group[-1][0]],
-                            sentence_cuts = sentence_cuts,
-                            depth         = depth+1,
-                            max_depth     = max_depth,
-                            which = 'over'
-                         ) for group in annotation_groups]
-                subs = [s for s in subs if s['difference']]
-
-                mark_end = max([mark_end, *[s['mark_end'] for s in subs]])
-
         privative = number_of_annotations>=2 and number_of_subjects >=2
         return {
             'annotation': annotation,
             'indices': indices,
             'tokens': tokens,
-            'text': text,
             'depth': depth,
-            'start': start_i,
+            'start': start,
             'id': next(self.id_source),
             'mark_end': mark_end,
             'annotated': any(relevant_tags),
             'difference': number_of_annotations >=2 ,
             'privative': privative,
-            'subs': subs
         }
 
     def change_proposals(self, cuts, indices):
@@ -205,44 +177,44 @@ class Proposaler:
         to be before or after this matched element.
 
         At beginning
-        >>> Proposaler.nearest (6, [3,8,12])
+        >>> TextSplitter.nearest (6, [3,8,12])
         1
-        >>> Proposaler.nearest (6, [3,8,12], before=True)
+        >>> TextSplitter.nearest (6, [3,8,12], before=True)
         0
-        >>> Proposaler.nearest (4, [3,8,12], after=True)
+        >>> TextSplitter.nearest (4, [3,8,12], after=True)
         1
 
         More at the end
-        >>> Proposaler.nearest (42, [3, 8, 12, 43, 100])
+        >>> TextSplitter.nearest (42, [3, 8, 12, 43, 100])
         3
-        >>> Proposaler.nearest (99, [3, 8, 12, 43, 100], before=True)
+        >>> TextSplitter.nearest (99, [3, 8, 12, 43, 100], before=True)
         3
-        >>> Proposaler.nearest (44, [3, 8, 12, 43, 100], after=True)
+        >>> TextSplitter.nearest (44, [3, 8, 12, 43, 100], after=True)
         4
 
         Borders of range
-        >>> Proposaler.nearest (100, [3, 8, 12, 43, 100])
+        >>> TextSplitter.nearest (100, [3, 8, 12, 43, 100])
         4
-        >>> Proposaler.nearest (3, [3, 8, 12, 43, 100])
+        >>> TextSplitter.nearest (3, [3, 8, 12, 43, 100])
         0
-        >>> Proposaler.nearest (100, [3, 8, 12, 43, 100], before=True)
+        >>> TextSplitter.nearest (100, [3, 8, 12, 43, 100], before=True)
         4
-        >>> Proposaler.nearest (3, [3, 8, 12, 43, 100], before=True)
+        >>> TextSplitter.nearest (3, [3, 8, 12, 43, 100], before=True)
         0
-        >>> Proposaler.nearest (100, [3, 8, 12, 43, 100], after=True)
+        >>> TextSplitter.nearest (100, [3, 8, 12, 43, 100], after=True)
         4
-        >>> Proposaler.nearest (3, [3, 8, 12, 43, 100], after=True)
+        >>> TextSplitter.nearest (3, [3, 8, 12, 43, 100], after=True)
         0
 
         Out out range
 
-        >>> Proposaler.nearest (300, [3, 8, 12, 43, 100])
+        >>> TextSplitter.nearest (300, [3, 8, 12, 43, 100])
         4
-        >>> Proposaler.nearest (2, [3, 8, 12, 43, 100])
+        >>> TextSplitter.nearest (2, [3, 8, 12, 43, 100])
         0
-        >>> Proposaler.nearest (500, [3, 8, 12, 43, 100], before=True)
+        >>> TextSplitter.nearest (500, [3, 8, 12, 43, 100], before=True)
         4
-        >>> Proposaler.nearest (1, [3, 8, 12, 43, 100], after=True)
+        >>> TextSplitter.nearest (1, [3, 8, 12, 43, 100], after=True)
         0
 
 

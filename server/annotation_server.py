@@ -1,14 +1,13 @@
 from core.annotation_protocol import *
 import customCrfTagger.cCrfT
 from core.model import Model
-from core.proposaler import Proposaler
+from core.textsplitter import TextSplitter
 from core.sampler import Sampler
 from core.corpus import Corpus
 from server.core.annotation_protocol import Ping
 from server.core.auto_corpus import AutoCorpus
 
 sampler = Sampler(sample_file='samples/server_samples_bin.txt')
-difference_pages = None #WebPageParser(path_to_htmls='../scraping/data')
 corpus_first = Corpus(path='server/corpus/first.conll3')
 corpus_over = Corpus(path='server/corpus/over.conll3')
 corpus_auto_first = Corpus(path='manually_annotated/topics/auto_first.conll3')
@@ -16,15 +15,14 @@ corpus_auto_first = Corpus(path='manually_annotated/topics/auto_first.conll3')
 #auto_corpus_second = AutoCorpus(which="over", corpus_over)
 model_first = Model(model_path="server/models/model_first.tar.gz")
 #model_over =  Model(model_path="server/models/model_over.tar.gz")
-#proposaler = Proposaler(model_first, model_over)
-proposaler = Proposaler(model_first, None)
+textsplitter = TextSplitter(model_first, None)
 
 from helpers.color_logger import *
 
 class AnnotationCloud(amp.AMP):
     def log_before_after(self, what, before, after):
         logging.info(what)
-        logging.info(f"{before[:100]} ... -->{after[:100]} ...")
+        logging.info(f"{str(before[:100])} \n... -->\n{str(after[:100])} ...")
 
     @MakePrediction.responder
     def makeprediction(self, text):
@@ -40,37 +38,20 @@ class AnnotationCloud(amp.AMP):
 
     @MakeProposals.responder
     def makeproposals(self, text, text_name):
-        #auto_corpus = AutoCorpus(source_corpora=
-        #                         ['server/corpus/first.conll3',
-        #                          'manually_annotated/train_first.conll3',
-        #                          'manually_annotated/test_first.conll3',
-        #                          'manually_annotated/valid_first.conll3'],
-        #                         target_corpus=corpus_auto_first)
-        if not text:
-            text = difference_pages.next_text()
-        proposals = list(proposaler.make_proposals(text))
-
-        #auto_corpus.compare_and_notate(text_name, proposals)
-        self.log_before_after('MakeProposals', text, proposals)
+        proposals = list(textsplitter.make_proposals(text))
+        self.log_before_after(f"Maked proposals for {text_name}", text, proposals[2])
         return {'proposals': proposals}
 
     @MakeProposalsIndexed.responder
     def makeproposalsindexed(self, indexed, text_name):
-        auto_corpus = AutoCorpus(source_corpora=
-                                 ['server/corpus/first.conll3',
-                                  'manually_annotated/train_first.conll3',
-                                  'manually_annotated/test_first.conll3',
-                                  'manually_annotated/valid_first.conll3'],
-                                 target_corpus=corpus_auto_first)
-        proposals = list(proposaler.make_proposals(indexed))
+        proposals = list(textsplitter.make_proposals(indexed))
 
-        auto_corpus.compare_and_notate(text_name, proposals)
         self.log_before_after('MakeProposals', indexed, proposals)
         return {'proposals': proposals}
 
     @ChangeProposals.responder
     def changeproposals(self, cuts, indices, delete_add):
-        proposals = proposaler.change_proposals(cuts, indices)
+        proposals = textsplitter.change_proposals(cuts, indices)
         self.log_before_after('ChangeProposals', cuts, proposals)
         return {'proposals': proposals, 'indices': indices, 'delete_add': delete_add}
 
