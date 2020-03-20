@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 from server.core.model import Model
 from server.core.textsplitter import TextSplitter
-from server.core.sampler import Sampler
 from server.core.corpus import Corpus
 
 sampler = Sampler(sample_file='samples/server_samples_bin.txt')
