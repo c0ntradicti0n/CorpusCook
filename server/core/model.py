@@ -4,9 +4,9 @@ import itertools
 import logging
 import operator
 import os
-from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 from regex import regex as re
 
+import customCrfTagger.cCrfT
 from difference_predictor.difference_predictor import MoreVersatileTaggerPredictor
 from helpers.list_tools import threewise
 from server.core.allennlp_predictor import SentenceTaggerPredictor as Predictor
