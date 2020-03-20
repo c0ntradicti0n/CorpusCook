@@ -1,6 +1,7 @@
 from flask import Flask, request
 
 import config
+from server.core.sampler import Sampler
 
 app = Flask(__name__)
 
